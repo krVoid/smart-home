@@ -19,6 +19,9 @@ import { AuthService } from 'src/app/services';
 
     <div class="actions">
       <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">LOG IN</button>
+      <br /><br />
+      <div class="header center">Or if you do not have account</div>
+      <button mat-raised-button color="primary" (click)="navigateToRegister()">Register Now</button>
     </div>
   </form>`,
   styles: [`
@@ -69,5 +72,9 @@ export class LoginComponent {
         this.router.navigate(['/dashboard']);
       }
     });
+  }
+
+  navigateToRegister() {
+    this.router.navigate(['/register'])
   }
 }

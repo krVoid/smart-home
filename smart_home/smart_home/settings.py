@@ -9,24 +9,24 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'k&gou@*kznlsuwkboz1nsnf!$j_s(7iy0r13ma9u2k*o!)kt1a'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -41,10 +41,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'smart_home_api.apps.SmartHomeApiConfig',
-    'smart_home_auth.apps.SmartHomeAuthConfig'
+    'smart_home_auth.apps.SmartHomeAuthConfig',
+    'invitations',
+    'django.contrib.sites',
 ]
 OAUTH2_PROVIDER = {
     # this is the list of available scopes
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 60 * 15,
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
 }
 REST_FRAMEWORK = {
@@ -53,7 +56,17 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'EXCEPTION_HANDLER': 'requestlogs.views.exception_handler',
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'loginAttempts': '6/hr',
+        'anon': '100/day',
+        'user': '100/day'
+    }
 }
 
 MIDDLEWARE = [
@@ -66,6 +79,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'requestlogs.middleware.RequestLogsMiddleware',
 ]
 
 ROOT_URLCONF = 'smart_home.urls'
@@ -91,7 +105,7 @@ WSGI_APPLICATION = 'smart_home.wsgi.application'
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
+    str(os.getenv("CLIENT_URL")),
 )
 
 # Database
@@ -99,11 +113,14 @@ CORS_ORIGIN_WHITELIST = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dbpostgres',
+        'USER': 'postgres',
+        'PASSWORD': os.getenv("DBPASSWORD"),
+        'HOST': '127.0.0.1',
+        'PORT': os.getenv("DBPORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -111,6 +128,9 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'max_similarity': 0.2
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -122,8 +142,32 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
+REQUESTLOGS = {
+    'STORAGE_CLASS': 'requestlogs.storages.LoggingStorage',
+    'ENTRY_CLASS': 'requestlogs.entries.RequestLogEntry',
+    'SERIALIZER_CLASS': 'requestlogs.storages.BaseEntrySerializer',
+    'SECRETS': ['password', 'token'],
+    'ATTRIBUTE_NAME': '_requestlog',
+    'METHODS': ('GET', 'PUT', 'PATCH', 'POST', 'DELETE'),
+}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'requestlogs_to_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logging/requestlogs.log',
+        },
+    },
+    'loggers': {
+        'requestlogs': {
+            'handlers': ['requestlogs_to_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -137,11 +181,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
 
-CLIENT_ID = 'WWBJDOizbObxfxiZESacLgJezVcAOwySzNcbV6B2'
-CLIENT_SECRET = 'UMHlxry10EYW1nsizWQzPAXxIsnasVBZJNVaSUaaZL4baplG9AbTRum98LdMSMoaEDl53Xj71qsAZNXksVBKX9ZN5R415qSu8tTSoYdliQtTcTNQeT9IGSvvfwKG2A8v'
+ACCOUNT_ADAPTER = 'invitations.models.InvitationsAdapter'
+
+INVITATIONS_SIGNUP_REDIRECT = 'auth/register/'
+
+INVITATIONS_LOGIN_REDIRECT = 'auth/token'
+
+SITE_ID = 1
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

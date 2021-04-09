@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { Dashboardomponent, LoginComponent } from './components';
-import { AuthGuard } from './services';
+import { AdminDashboardComponent, Dashboardomponent, LoginComponent, RegisterComponent } from './components';
+import { DeviceDetailsComponent } from './components/add-device/devide-details.component';
+import { AdminGuard, AuthGuard } from './services';
 
 const routes: Routes = [
   {
@@ -9,9 +10,24 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
+    path: 'register',
+    component: RegisterComponent
+  },
+  {
     path: 'dashboard',
     component: Dashboardomponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'device/:id',
+    component: DeviceDetailsComponent,
+    canActivate: [AuthGuard]
+  },
+  
+  {
+    path: 'admin',
+    component: AdminDashboardComponent,
+    canActivate: [AuthGuard, AdminGuard]
   },
 ];
 

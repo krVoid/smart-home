@@ -4,6 +4,7 @@ import { of, Observable } from 'rxjs';
 import { catchError, mapTo, tap } from 'rxjs/operators';
 import { TokenDto } from '../dto'
 
+
 @Injectable({
     providedIn: 'root'
 })
@@ -14,6 +15,10 @@ export class AuthService {
     private loggedUser: string;
 
     constructor(private http: HttpClient) {}
+
+    isAdmin() {
+      return this.http.get<boolean>(`${this.apiUrl}/is_superuser/`)
+    }
   
     login(user: { username: string, password: string }): Observable<boolean> {
       return this.http.post<any>(`${this.apiUrl}/token/`, user)
@@ -26,9 +31,21 @@ export class AuthService {
           }));
     }
   
+    register(user: { username: string, password: string, email: string }): Observable<boolean> {
+      return this.http.post<any>(`${this.apiUrl}/register/`, user)
+        .pipe(
+          tap(tokens => this.doLoginUser(user.username, tokens)),
+          mapTo(true),
+          catchError(error => {
+            alert(error.error);
+            return of(false);
+          }));
+    }
+  
     logout() {
+      const t = this.getToken()      
       return this.http.post<any>(`${this.apiUrl}/revoke_token/`, {
-        'refreshToken': this.getRefreshToken()
+        'token': t
       }).pipe(
         tap(() => this.doLogoutUser()),
         mapTo(true),
@@ -44,7 +61,7 @@ export class AuthService {
   
     refreshToken() {
       return this.http.post<any>(`${this.apiUrl}/refresh_token/`, {
-        'refresh_token': this.getRefreshToken()
+        'token': this.getToken()
       }).pipe(tap((tokens: TokenDto) => {
         this.storeTokens(tokens);
       }));
@@ -64,21 +81,16 @@ export class AuthService {
       this.removeTokens();
     }
   
-    private getRefreshToken() {
-      return localStorage.getItem(this.REFRESH_TOKEN);
-    }
-  
-    private storeToken(jwt: string) {
-      localStorage.setItem(this.JWT_TOKEN, jwt);
-    }
-  
     private storeTokens(tokens: TokenDto) {
       localStorage.setItem(this.JWT_TOKEN, tokens.access_token);
-      localStorage.setItem(this.REFRESH_TOKEN, tokens.refresh_token);
     }
   
     private removeTokens() {
       localStorage.removeItem(this.JWT_TOKEN);
-      localStorage.removeItem(this.REFRESH_TOKEN);
     }
+
+
+    public getUsers(){
+      return this.http.get<any>(`${this.apiUrl}/users/`);
+  }
 }

@@ -6,4 +6,4 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta: 
         model = Device
-        fields = ('name', 'url')
+        fields = ('name', 'url', 'id')

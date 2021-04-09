@@ -1,2 +1,5 @@
 export * from './login/login.component'
 export * from './dashboard/dashboard.component'
+export * from './register/register.component'
+export * from './add-device/devide-details.component'
+export * from './admin-dashboard/admin-dashboard.component'
