@@ -1,7 +1,7 @@
 from django.http import HttpResponse, Http404
 from rest_framework.response import Response
 from rest_framework import permissions
-from .models import Device
+from .models import Device, DeviceInput, DeviceOutput
 from .serializers import DeviceSerializer, DeviceInputSerializer, DeviceOutputSerializer
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
@@ -20,6 +20,28 @@ auto_light_thread = None
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+mockRegisterResponse2 = {
+  "inputs": [
+    {
+      "name": "czujnik1",
+      "description": "dupa"
+    },
+ \
+  ],
+  "outputs": [
+    {
+      "name": "lampa1",
+      "description": "du3pa",
+      "isBinary": False
+    },
+    {
+      "name": "lampa2",
+      "description": "dupa",
+      "isBinary": True,
+      
+    }
+  ]
+}
 mockRegisterResponse = {
   "inputs": [
     {
@@ -71,6 +93,32 @@ def register_device(request):
     except Device.DoesNotExist:
         raise Http404
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def update_device(request):
+    try:
+        response = False
+        r_device_id = request.data['id']
+        device = Device.objects.get(pk=r_device_id)   
+        # response = requests.get(device.url + '/register')     
+        response = mockRegisterResponse2
+        DeviceInput.objects.filter(device_id=r_device_id).delete()
+        DeviceOutput.objects.filter(device_id=r_device_id).delete()
+        # deviceSerializer = DeviceSerializer(data=request.data)
+
+        # device = deviceSerializer.save()
+        for inputDevice in response["inputs"]:
+            inputSerializer = DeviceInputSerializer(data=inputDevice)
+            if inputSerializer.is_valid():
+                inputSerializer.save(device=device)
+        for outputDevice in response["outputs"]:
+            outputSerializer = DeviceOutputSerializer(data=outputDevice)
+            if outputSerializer.is_valid():
+                outputSerializer.save(device=device)
+        return Response(response)
+    except Device.DoesNotExist:
+        raise Http404
+
 ##############################################################################33
 # this is old functions pls don't move
 
@@ -84,7 +132,7 @@ def switch_lamp(request):
         response = False
         if r_device_state:
             response = requests.get(device.url + 'light-on')
-        else:
+        else: 
             response = requests.get(device.url + 'light-off')
         return Response(response)
     except Device.DoesNotExist:

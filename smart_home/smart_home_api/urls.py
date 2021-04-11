@@ -12,6 +12,7 @@ urlpatterns = [
     path('switch_lamp/', views.switch_lamp),
     path('register_device/', views.register_device),
     path('brightness_lamp/', views.brightness_lamp),
+    path('update_device/', views.update_device),
     path('auto_lamp/', views.auto_lamp),
     path('invitations/', include('invitations.urls', namespace='invitations')),
 ]
