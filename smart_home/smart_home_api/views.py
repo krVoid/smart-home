@@ -2,7 +2,7 @@ from django.http import HttpResponse, Http404
 from rest_framework.response import Response
 from rest_framework import permissions
 from .models import Device
-from .serializers import DeviceSerializer
+from .serializers import DeviceSerializer, DeviceInputSerializer, DeviceOutputSerializer
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 import requests
@@ -12,12 +12,67 @@ from rest_framework.response import Response
 from . import fuzzyLightControll
 import numpy as np
 import time, threading
+import json
 
 auto_lght_enabled = False
 auto_light_thread = None
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
+
+mockRegisterResponse = {
+  "inputs": [
+    {
+      "name": "czujnik1",
+      "description": "dupa"
+    },
+    {
+      "name": "czujnik2",
+      "description": "dupa"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "lampa1",
+      "description": "dupa",
+      "isBinary": True
+    },
+    {
+      "name": "lampa2",
+      "description": "dupa",
+      "isBinary": False,
+      "min": 10,
+      "max": 120
+    }
+  ]
+}
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def register_device(request):
+    try:
+        response = False
+        deviceSerializer = DeviceSerializer(data=request.data)
+        if deviceSerializer.is_valid():
+            device = deviceSerializer.save()
+            # response = requests.get(device.url + '/register')
+            response = mockRegisterResponse
+            for inputDevice in response["inputs"]:
+                inputSerializer = DeviceInputSerializer(data=inputDevice)
+                if inputSerializer.is_valid():
+                    inputSerializer.save(device=device)
+            for outputDevice in response["outputs"]:
+                outputSerializer = DeviceOutputSerializer(data=outputDevice)
+                if outputSerializer.is_valid():
+                    outputSerializer.save(device=device)
+            return Response(device.id)
+        return Response(response)
+    except Device.DoesNotExist:
+        raise Http404
+
+##############################################################################33
+# this is old functions pls don't move
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -84,6 +139,8 @@ def tmp(device_url):
             print('Wynik Fuzzy Controller: ', newIlluminance)
             response = requests.post(device_url + 'brightness', str(np.float64(newIlluminance).item()))
         time.sleep(1)
+
+################################################################
 
 class DeviceViewSet(viewsets.ModelViewSet):
     queryset = Device.objects.all()
