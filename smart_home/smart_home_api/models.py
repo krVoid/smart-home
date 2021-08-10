@@ -25,3 +25,20 @@ class DeviceOutput(models.Model):
     max = models.IntegerField(default=1)
     class Meta:
         unique_together = (("device", "name"),)  
+
+
+class DeviceOutputAction(models.Model):
+
+    class ActionType(models.TextChoices):
+        POST = 'POST'
+        GET = 'GET'
+
+    name = models.CharField(max_length=30)
+    deviceOutput = models.ForeignKey(DeviceOutput, related_name="outputaction", on_delete=models.CASCADE)
+    description = models.CharField(max_length=230, null = True)
+    url = models.TextField(default='/')
+    type = models.CharField(choices=ActionType.choices, default=ActionType.GET, max_length=50)
+    parameters = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = (("deviceOutput", "name"),)  

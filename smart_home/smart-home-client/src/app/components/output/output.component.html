@@ -1,0 +1,75 @@
+<div class="output-wrapper">
+  <div class="output-wrapper-border">
+    <p class="output-header">
+      {{ output.name }}
+    </p>
+
+    <p *ngIf="output.description" class="output-description">
+      {{ output.description }}
+    </p>
+    <div class="output-actions">
+      <!-- <div
+        class="output-action-wrapper"
+        *ngFor="let action of output.outputaction"
+      >
+        {{ action.name }}
+      </div>-->
+      <div class="output-action-wrapper">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-slide-toggle color="primary"
+                >Turn on/off</mat-slide-toggle
+              ></mat-panel-title
+            >
+          </mat-expansion-panel-header>
+          <div>
+            Type:
+            <span class="output-description">POST</span>
+          </div>
+          <div>
+            URL:
+            <span class="output-description">/switch</span>
+          </div></mat-expansion-panel
+        >
+      </div>
+      <div class="output-action-wrapper" *ngIf="output.isBinary">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Set value from 0-255"
+                  [(ngModel)]="newIlluminance"
+                />
+              </mat-form-field>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <button mat-raised-button color="primary">Set new Illuminance</button>
+          <div>
+            Type:
+            <span class="output-description">POST</span>
+          </div>
+          <div>
+            URL:
+            <span class="output-description">/set_illuminance</span>
+          </div>
+        </mat-expansion-panel>
+      </div>
+      <!--  <div class="output-action-wrapper" *ngIf="output.isBinary">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-slide-toggle [checked]="isAutoLamp">
+                Set Auto Lamp
+              </mat-slide-toggle>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <p>This is the primary content of the panel.</p>
+        </mat-expansion-panel>
+      </div>-->
+    </div>
+  </div>
+</div>

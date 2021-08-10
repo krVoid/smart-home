@@ -1,30 +1,42 @@
-<h2>Devices</h2>
+<h2>Modules</h2>
+<button mat-raised-button color="primary" (click)="navigateToAdd()">
+  Add module
+</button>
 
-<table *ngIf="isInit" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  
+<table
+  *ngIf="isInit"
+  mat-table
+  [dataSource]="dataSource"
+  class="mat-elevation-z8"
+>
   <ng-container matColumnDef="number">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Num. </th>
-    <td mat-cell *matCellDef="let element; let i = index">{{i + 1}}</td>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Num.</th>
+    <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
   </ng-container>
 
   <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef> Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let element">{{ element.name }}</td>
   </ng-container>
 
   <ng-container matColumnDef="url">
-    <th mat-header-cell *matHeaderCellDef> URL </th>
-    <td mat-cell *matCellDef="let element"> {{element.url}} </td>
+    <th mat-header-cell *matHeaderCellDef>URL</th>
+    <td mat-cell *matCellDef="let element">{{ element.url }}</td>
   </ng-container>
 
   <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
     <td mat-cell *matCellDef="let element">
-      <button mat-raised-button color="primary" (click)="navigateToDetails(element.id)">Details</button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="navigateToDetails(element.id)"
+      >
+        Details
+      </button>
     </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
-

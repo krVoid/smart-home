@@ -1,8 +1,8 @@
 from django.http import HttpResponse, Http404
 from rest_framework.response import Response
 from rest_framework import permissions
-from .models import Device, DeviceInput, DeviceOutput
-from .serializers import DeviceSerializer, DeviceInputSerializer, DeviceOutputSerializer
+from .models import Device, DeviceInput, DeviceOutput, DeviceOutputAction
+from .serializers import DeviceSerializer, DeviceOutputActionSerializer,DeviceInputSerializer, DeviceOutputSerializer
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 import requests
@@ -26,7 +26,6 @@ mockRegisterResponse2 = {
       "name": "czujnik1",
       "description": "dupa"
     },
- \
   ],
   "outputs": [
     {
@@ -209,6 +208,36 @@ class DeviceViewSetDetail(APIView):
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk)
         serializer = DeviceSerializer(snippet, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AtionViewSet(viewsets.ModelViewSet):
+    serializer_class = DeviceOutputActionSerializer
+    def get_object(self, pk):
+            try:
+                return DeviceOutputAction.objects.get(pk=pk)
+            except Device.DoesNotExist:
+                raise Http404
+    @staticmethod
+    def create(self, output_id):
+        serializer = DeviceOutputActionSerializer(data=self.data)
+        output_instance = DeviceOutput.objects.filter(id=output_id).first()
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(deviceOutput=output_instance)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = DeviceOutputActionSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

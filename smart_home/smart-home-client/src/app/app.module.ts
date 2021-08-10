@@ -1,20 +1,32 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
-import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {MatInputModule} from '@angular/material/input';
-import {MatTableModule} from '@angular/material/table';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material/table';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AdminDashboardComponent, Dashboardomponent, DeviceDetailsComponent, LoginComponent, RegisterComponent } from './components';
+import {
+  AdminDashboardComponent,
+  Dashboardomponent,
+  DeviceDetailsComponent,
+  LoginComponent,
+  RegisterComponent,
+} from './components';
 import { TokenInterceptor } from './services/token.interceptor';
-import { NavbarComponent } from './ui';
+import { NavbarComponent, SidenavComponent } from './ui';
 import { UncaughtExceptionsHandler } from './services/uncaught-exception-handler.service';
 import { ServerErrorHandlerInterceptor } from './services/server-error-handler.interceptor';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { InputsGridComponent } from './components/add-device/inputs-grid.component';
+import { OutputsGridComponent } from './components/add-device/outputs-grid.component';
+import { OutputComponent } from './components/output/output.component';
+import { AdvancedActionsComponent } from './components/add-device/actions.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +36,12 @@ import { ServerErrorHandlerInterceptor } from './services/server-error-handler.i
     NavbarComponent,
     RegisterComponent,
     DeviceDetailsComponent,
-    AdminDashboardComponent
+    AdminDashboardComponent,
+    SidenavComponent,
+    InputsGridComponent,
+    AdvancedActionsComponent,
+    OutputsGridComponent,
+    OutputComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,26 +54,28 @@ import { ServerErrorHandlerInterceptor } from './services/server-error-handler.i
     MatInputModule,
     MatTableModule,
     MatSlideToggleModule,
-    FormsModule
+    FormsModule,
+    MatSidenavModule,
+    MatExpansionModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ServerErrorHandlerInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: ErrorHandler,
-      useClass: UncaughtExceptionsHandler
+      useClass: UncaughtExceptionsHandler,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
 
 // dsn="https://d729d8feb52a43d084830e4a04d68e02@o498265.ingest.sentry.io/5575611",
