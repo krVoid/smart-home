@@ -71,4 +71,5 @@ import { OutputDto } from 'src/app/dto';
 })
 export class AdvancedActionsComponent {
   public isAutoLamp = false;
+  public addAction(): void {}
 }

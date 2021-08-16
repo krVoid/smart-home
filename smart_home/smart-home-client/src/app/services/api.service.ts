@@ -26,6 +26,24 @@ export class ApiService {
     return this.http.post<any>(`${this.apiUrl}/update_device/`, newDevice);
   }
 
+  public turnOn(switchL: any): Promise<boolean> {
+    console.log(switchL);
+
+    return this.http.post<any>(`${this.apiUrl}/turn_on/`, switchL).toPromise();
+  }
+  public turnOff(switchL: any): Promise<boolean> {
+    return this.http.post<any>(`${this.apiUrl}/turn_off/`, switchL).toPromise();
+  }
+  public setValue(switchL: any): Promise<boolean> {
+    return this.http
+      .post<any>(`${this.apiUrl}/set_value/`, switchL)
+      .toPromise();
+  }
+  public getOtuputValue(switchL: any): Promise<boolean> {
+    return this.http
+      .post<any>(`${this.apiUrl}/get_output_value/`, switchL)
+      .toPromise();
+  }
   //this is old functions pls don't move
   public addDevices(newDevice: DeviceDto): Observable<boolean> {
     return this.http.post<any>(`${this.apiUrl}/devicedevice/`, newDevice);

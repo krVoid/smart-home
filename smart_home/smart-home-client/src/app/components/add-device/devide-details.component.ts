@@ -39,6 +39,7 @@ import { ApiService } from 'src/app/services';
       <app-output
         *ngFor="let outputValue of device.deviceoutput"
         [output]="outputValue"
+        [deviceId]="device.id"
       ></app-output>
     </div>
     <!--   <app-outputs-grid

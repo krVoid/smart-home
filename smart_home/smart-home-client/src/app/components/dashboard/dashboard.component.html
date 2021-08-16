@@ -3,7 +3,7 @@
   Add module
 </button>
 
-<table
+<!--<table
   *ngIf="isInit"
   mat-table
   [dataSource]="dataSource"
@@ -40,3 +40,48 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+-->
+
+<div *ngIf="isInit">
+  <div
+    class="output-wrapper"
+    (click)="navigateToDetails(device.id)"
+    *ngFor="let device of dataSource"
+  >
+    <div class="output-wrapper-border">
+      <p class="output-header" style="font-weight: bold">
+        {{ device.name }}
+      </p>
+      <div
+        class="output-wrapper-output"
+        *ngFor="let output of device.deviceoutput"
+      >
+        <p class="output-header">
+          {{ output.name }}
+        </p>
+        <!--
+        <p *ngIf="output.description" class="output-description">
+          {{ output.description }}
+        </p>-->
+        <div class="output-actions">
+          {{ output | json }}
+          <mat-slide-toggle color="primary">Turn on/off</mat-slide-toggle>
+          <div *ngIf="!output.isBinary">
+            <input
+              matInput
+              placeholder="Set value from 0-255"
+              [(ngModel)]="newValue"
+            />
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="setNewValue(device.id, $event)"
+            >
+              Set new Illuminance
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

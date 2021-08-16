@@ -11,6 +11,7 @@ class DeviceInput(models.Model):
     name = models.CharField(max_length=30)
     device = models.ForeignKey(Device, related_name="deviceinput",on_delete=models.CASCADE)
     description = models.CharField(max_length=230, null = True)
+    inputId = models.IntegerField(blank=True, null=True)
 
     class Meta:
         unique_together = (("device", "name"),)  
@@ -23,6 +24,8 @@ class DeviceOutput(models.Model):
     isBinary = models.BooleanField(default=True)
     min = models.IntegerField(default=0)
     max = models.IntegerField(default=1)
+    outputId = models.IntegerField(blank=True, null=True)
+
     class Meta:
         unique_together = (("device", "name"),)  
 

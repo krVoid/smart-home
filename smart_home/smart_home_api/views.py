@@ -20,54 +20,70 @@ auto_light_thread = None
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
-mockRegisterResponse2 = {
-  "inputs": [
-    {
-      "name": "czujnik1",
-      "description": "dupa"
-    },
-  ],
-  "outputs": [
-    {
-      "name": "lampa1",
-      "description": "du3pa",
-      "isBinary": False
-    },
-    {
-      "name": "lampa2",
-      "description": "dupa",
-      "isBinary": True,
-      
-    }
-  ]
-}
-mockRegisterResponse = {
-  "inputs": [
-    {
-      "name": "czujnik1",
-      "description": "dupa"
-    },
-    {
-      "name": "czujnik2",
-      "description": "dupa"
-    }
-  ],
-  "outputs": [
-    {
-      "name": "lampa1",
-      "description": "dupa",
-      "isBinary": True
-    },
-    {
-      "name": "lampa2",
-      "description": "dupa",
-      "isBinary": False,
-      "min": 10,
-      "max": 120
-    }
-  ]
-}
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def turn_on(request):
+    try:
+        r_device_id = request.data['id']
+        output_id = request.data['outputId']
+        device = Device.objects.get(pk=r_device_id)
+        response = False
+        url = device.url + "/output/"+str(output_id)+"/turn-on"
+        url = url.replace("//output", "/output")
+        response = requests.post(url)
+        return Response(response)
+    except Device.DoesNotExist:
+        raise Http404
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def turn_off(request):
+    try:
+        r_device_id = request.data['id']
+        output_id = request.data['outputId']
+        device = Device.objects.get(pk=r_device_id)
+        response = False
+        url = device.url + "/output/"+str(output_id)+"/turn-off"
+        url = url.replace("//output", "/output")
+        response = requests.post(url)
+        return Response(response)
+    except Device.DoesNotExist:
+        raise Http404
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def set_value(request):
+    try:
+        r_device_id = request.data['id']
+        output_id = request.data['outputId']
+        new_value = request.data['value']
+        device = Device.objects.get(pk=r_device_id)
+        output = DeviceOutput.objects.get(pk=output_id)
+        if new_value > output.max or new_value < output.min or output.isBinary:
+            raise status.HTTP_400_BAD_REQUEST
+        response = False
+        url = device.url + "/output/"+str(output_id)+"/set-value"
+        url = url.replace("//output", "/output")
+        response = requests.post(url, new_value)
+        return Response(response)
+    except Device.DoesNotExist:
+        raise Http404
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def get_output_value(request):
+    try:
+        r_device_id = request.data['id']
+        output_id = request.data['outputId']
+        device = Device.objects.get(pk=r_device_id)
+        response = False
+        url = device.url + "/output/"+str(output_id)+"/get-value"
+        url = url.replace("//output", "/output")
+        response = requests.post(url)
+        print(response)
+        return Response(response)
+    except Device.DoesNotExist:
+        raise Http404
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -77,13 +93,16 @@ def register_device(request):
         deviceSerializer = DeviceSerializer(data=request.data)
         if deviceSerializer.is_valid():
             device = deviceSerializer.save()
-            # response = requests.get(device.url + '/register')
-            response = mockRegisterResponse
-            for inputDevice in response["inputs"]:
+            url = request.data['url'] + '/register'
+            url = url.replace("//register", "/register")
+            response =requests.get(url)
+            response = response.text.replace("\'", "\"").replace(",]", "]")
+            responseJson = json.loads(response)
+            for inputDevice in responseJson["inputs"]:
                 inputSerializer = DeviceInputSerializer(data=inputDevice)
                 if inputSerializer.is_valid():
                     inputSerializer.save(device=device)
-            for outputDevice in response["outputs"]:
+            for outputDevice in responseJson["outputs"]:
                 outputSerializer = DeviceOutputSerializer(data=outputDevice)
                 if outputSerializer.is_valid():
                     outputSerializer.save(device=device)
@@ -99,18 +118,22 @@ def update_device(request):
         response = False
         r_device_id = request.data['id']
         device = Device.objects.get(pk=r_device_id)   
-        # response = requests.get(device.url + '/register')     
-        response = mockRegisterResponse2
+        
+        url = request.data['url'] + '/register'
+        url = url.replace("//register", "/register")
+        response =requests.get(url)
+        response = response.text.replace("\'", "\"").replace(",]", "]")
+        responseJson = json.loads(response)
         DeviceInput.objects.filter(device_id=r_device_id).delete()
         DeviceOutput.objects.filter(device_id=r_device_id).delete()
         # deviceSerializer = DeviceSerializer(data=request.data)
 
         # device = deviceSerializer.save()
-        for inputDevice in response["inputs"]:
+        for inputDevice in responseJson["inputs"]:
             inputSerializer = DeviceInputSerializer(data=inputDevice)
             if inputSerializer.is_valid():
                 inputSerializer.save(device=device)
-        for outputDevice in response["outputs"]:
+        for outputDevice in responseJson["outputs"]:
             outputSerializer = DeviceOutputSerializer(data=outputDevice)
             if outputSerializer.is_valid():
                 outputSerializer.save(device=device)
@@ -218,7 +241,7 @@ class DeviceViewSetDetail(APIView):
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
+#chyba do wywalenia
 class AtionViewSet(viewsets.ModelViewSet):
     serializer_class = DeviceOutputActionSerializer
     def get_object(self, pk):

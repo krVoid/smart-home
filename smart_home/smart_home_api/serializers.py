@@ -20,7 +20,7 @@ class DeviceOutputSerializer(serializers.ModelSerializer):
 
     class Meta: 
         model = DeviceOutput
-        fields = ('name', 'id','description','isBinary', 'min', 'max', "outputaction")
+        fields = ('name', 'id','description','isBinary', 'min', 'max', "outputId", "outputaction")
 
 class DeviceSerializer(serializers.ModelSerializer):
     deviceinput =  DeviceInputSerializer(many= True, read_only=True)

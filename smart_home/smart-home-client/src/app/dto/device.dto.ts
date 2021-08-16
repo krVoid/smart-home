@@ -16,6 +16,7 @@ export interface InputDto {
 
 export interface OutputDto {
   name: string;
+  outputId: any;
   description?: string;
   isBinary: boolean;
   min?: number;
