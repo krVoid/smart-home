@@ -87,6 +87,22 @@ def get_output_value(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
+def get_input_value(request):
+    try:
+        r_device_id = request.data['id']
+        input_id = request.data['inputId']
+        device = Device.objects.get(pk=r_device_id)
+        response = False
+        url = device.url + "/sensor/"+str(input_id)
+        url = url.replace("//sensor", "/sensor")
+        response = requests.post(url)
+        print(response.text)
+        return Response(response.text)
+    except Device.DoesNotExist:
+        raise Http404
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
 def register_device(request):
     try:
         response = False

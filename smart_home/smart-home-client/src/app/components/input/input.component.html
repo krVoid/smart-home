@@ -1,0 +1,43 @@
+<div class="input-wrapper">
+  <div class="input-wrapper-border">
+    <p class="input-header">
+      {{ input.name }}
+
+      <span *ngIf="showCurrentStatus && currentStatus">{{
+        currentStatus
+      }}</span>
+    </p>
+
+    <p *ngIf="input.description" class="input-description">
+      {{ input.description }}
+    </p>
+    <div class="input-actions">
+      <div class="input-action-wrapper">
+        <mat-slide-toggle
+          color="primary"
+          [(ngModel)]="showCurrentStatus"
+          (ngModelChange)="toogleShowStatus($event)"
+          >Show status</mat-slide-toggle
+        >
+      </div>
+      <!--    <div class="input-action-wrapper" *ngIf="!input.isBinary">
+        <mat-form-field style="width: 100%">
+          <input
+            matInput
+            placeholder="Set value from 0-255"
+            [(ngModel)]="newValue"
+          />
+          <button
+            mat-raised-button
+            matSuffix
+            color="primary"
+            (click)="setNewValue(device.id, $event)"
+          >
+            Update
+          </button>
+        </mat-form-field>
+      </div>
+-->
+    </div>
+  </div>
+</div>

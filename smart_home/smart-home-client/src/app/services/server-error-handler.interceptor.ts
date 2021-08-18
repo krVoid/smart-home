@@ -4,7 +4,7 @@ import {
   HttpHandler,
   HttpEvent,
   HttpRequest,
-  HttpErrorResponse
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, NEVER, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
@@ -13,14 +13,16 @@ import { retry, catchError } from 'rxjs/operators';
 export class ServerErrorHandlerInterceptor implements HttpInterceptor {
   constructor(private injector: Injector) {}
 
-  public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  public intercept(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
-      retry(1),
       catchError((error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
           return throwError(error);
         }
-        alert(JSON.stringify(error.error));  
+        alert(JSON.stringify(error.error));
         return NEVER;
       })
     );

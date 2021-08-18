@@ -15,56 +15,29 @@
         {{ action.name }}
       </div>-->
       <div class="output-action-wrapper">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <mat-slide-toggle
-                color="primary"
-                [(ngModel)]="turnOn"
-                (ngModelChange)="toggleOutput($event)"
-                >Turn on/off</mat-slide-toggle
-              ></mat-panel-title
-            >
-          </mat-expansion-panel-header>
-          <div>
-            Type:
-            <span class="output-description">POST</span>
-          </div>
-          <div>
-            URL:
-            <span class="output-description">/switch</span>
-          </div></mat-expansion-panel
+        <mat-slide-toggle
+          color="primary"
+          [(ngModel)]="turnOn"
+          (ngModelChange)="toggleOutput($event)"
+          >Turn on/off</mat-slide-toggle
         >
       </div>
       <div class="output-action-wrapper" *ngIf="!output.isBinary">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <mat-form-field>
-                <input
-                  matInput
-                  placeholder="Set value from 0-255"
-                  [(ngModel)]="newValue"
-                />
-              </mat-form-field>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
+        <mat-form-field style="width: 100%">
+          <input
+            matInput
+            placeholder="Set value from 0-255"
+            [(ngModel)]="newValue"
+          />
           <button
             mat-raised-button
+            matSuffix
             color="primary"
             (click)="setNewValue(device.id, $event)"
           >
-            Set new value
+            Update
           </button>
-          <div>
-            Type:
-            <span class="output-description">POST</span>
-          </div>
-          <div>
-            URL:
-            <span class="output-description">/set_illuminance</span>
-          </div>
-        </mat-expansion-panel>
+        </mat-form-field>
       </div>
       <!--  <div class="output-action-wrapper" *ngIf="output.isBinary">
         <mat-expansion-panel>

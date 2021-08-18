@@ -12,7 +12,7 @@ class DeviceInputSerializer(serializers.ModelSerializer):
 
     class Meta: 
         model = DeviceInput
-        fields = '__all__'
+        fields = ('name', 'id','description', "inputId")
 
 
 class DeviceOutputSerializer(serializers.ModelSerializer):

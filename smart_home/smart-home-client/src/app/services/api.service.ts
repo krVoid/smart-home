@@ -39,11 +39,16 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/set_value/`, switchL)
       .toPromise();
   }
+  //to testing
   public getOtuputValue(switchL: any): Promise<boolean> {
     return this.http
-      .post<any>(`${this.apiUrl}/get_output_value/`, switchL)
+      .post<any>(`${this.apiUrl}/get_output_value`, switchL)
       .toPromise();
   }
+  public getInputValue(switchL: any): Observable<boolean> {
+    return this.http.post<any>(`${this.apiUrl}/get_input_value`, switchL);
+  }
+
   //this is old functions pls don't move
   public addDevices(newDevice: DeviceDto): Observable<boolean> {
     return this.http.post<any>(`${this.apiUrl}/devicedevice/`, newDevice);

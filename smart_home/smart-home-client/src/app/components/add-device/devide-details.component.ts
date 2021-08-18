@@ -42,16 +42,25 @@ import { ApiService } from 'src/app/services';
         [deviceId]="device.id"
       ></app-output>
     </div>
+
+    <div *ngIf="device && device.deviceinput">
+      <app-input
+        *ngFor="let inputValue of device.deviceinput"
+        [input]="inputValue"
+        [deviceId]="device.id"
+      ></app-input>
+    </div>
+
     <!--   <app-outputs-grid
       *ngIf="device && device.deviceoutput"
       [outputs]="device.deviceoutput"
     ></app-outputs-grid> -->
-    <app-actions></app-actions>
-    <app-inputs-grid
+    <!--    <app-actions></app-actions>
+ <app-inputs-grid
       *ngIf="device && device.deviceinput"
       [inputs]="device.deviceinput"
     ></app-inputs-grid>
-    <!-- {{ device | json }} -->
+    {{ device | json }} -->
   `,
   styles: [
     `

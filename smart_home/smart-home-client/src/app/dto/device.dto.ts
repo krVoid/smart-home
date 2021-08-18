@@ -12,6 +12,7 @@ export interface InputDto {
   name: string;
   description?: string;
   id: number;
+  inputId: any;
 }
 
 export interface OutputDto {

@@ -14,6 +14,7 @@ urlpatterns = [
     path('turn_off/', views.turn_off),
     path('set_value/', views.set_value),
     path('get_output_value', views.get_output_value),
+    path('get_input_value', views.get_input_value),
 
     path('device/output/<int:output_id>/action', views.AtionViewSet.as_view({'post':'create'})),
     path('switch_lamp/', views.switch_lamp),
