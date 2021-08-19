@@ -38,10 +38,10 @@ class DeviceInputNotification(models.Model):
 class DeviceOutput(models.Model):
     name = models.CharField(max_length=30)
     device = models.ForeignKey(Device, related_name="deviceoutput", on_delete=models.CASCADE)
-    description = models.CharField(max_length=230, null = True)
+    description = models.CharField(max_length=230, null = True, blank= True)
     isBinary = models.BooleanField(default=True)
-    min = models.IntegerField(default=0)
-    max = models.IntegerField(default=1)
+    min = models.IntegerField(blank=True, null=True)
+    max = models.IntegerField(blank=True, null=True)
     outputId = models.IntegerField(blank=True, null=True)
 
     class Meta:

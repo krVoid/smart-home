@@ -49,7 +49,7 @@ class Notifier:
 
     def main_loop(self):
         while True:
-            time.sleep(1)
+            time.sleep(60)
             self.lock.acquire()
             try:
                 self.notify()
@@ -105,16 +105,7 @@ def send_email(email_to, message, subject):
     # text = render_to_string('smart_home/smart_home_api/messageTemplates/email.txt', {'text': message})
     text = 'This is an important message.'
     html = '<p>This is an <strong>important</strong> message.</p>'
-    send_mail(subject, text, settings.EMAIL_HOST_USER, [email_to], fail_silently=False)
-
-    # msg = EmailMultiAlternatives(subject, text, email_from, [email_to])
-    # msg.attach_alternative(html, "text/html")
-    # try:
-    #     msg.send()
-    #     return True
-    # except SMTPException as e:
-    #     print('There was an error sending an email: ', e)
-    #     return False
+    # send_mail(subject, text, settings.EMAIL_HOST_USER, [email_to], fail_silently=False)
 
 
 
@@ -156,8 +147,8 @@ def set_value(request):
         output_id = request.data['outputId']
         new_value = request.data['value']
         device = Device.objects.get(pk=r_device_id)
-        output = DeviceOutput.objects.get(pk=output_id)
-        if new_value > output.max or new_value < output.min or output.isBinary:
+        output = DeviceOutput.objects.get(device_id = r_device_id, outputId=output_id)
+        if int(new_value) > int(output.max) or int(new_value) < int(output.min) or output.isBinary:
             raise status.HTTP_400_BAD_REQUEST
         response = False
         url = device.url + "/output/"+str(output_id)+"/set-value"
@@ -212,14 +203,15 @@ def register_device(request):
             response =requests.get(url)
             response = response.text.replace("\'", "\"").replace(",]", "]")
             responseJson = json.loads(response)
-            for inputDevice in responseJson["inputs"]:
-                inputSerializer = DeviceInputSerializer(data=inputDevice)
-                if inputSerializer.is_valid():
-                    inputSerializer.save(device=device)
             for outputDevice in responseJson["outputs"]:
                 outputSerializer = DeviceOutputSerializer(data=outputDevice)
                 if outputSerializer.is_valid():
                     outputSerializer.save(device=device)
+            for inputDevice in responseJson["inputs"]:
+                inputSerializer = DeviceInputSerializer(data=inputDevice)
+                if inputSerializer.is_valid():
+                    inputSerializer.save(device=device)
+
             return Response(device.id)
         return Response(response)
     except Device.DoesNotExist:

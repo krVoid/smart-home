@@ -31,6 +31,7 @@ export class OutputComponent implements OnInit {
     await this.apiService.setValue({
       id: this.deviceId,
       outputId: this.output.outputId,
+      value: this.newValue,
     });
     event.stopPropagation();
   }
