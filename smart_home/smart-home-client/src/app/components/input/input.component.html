@@ -10,6 +10,16 @@
 
     <p *ngIf="input.description" class="input-description">
       {{ input.description }}
+
+      <span>
+        <button
+          mat-mini-fab
+          (click)="addNotification(input)"
+          title="Add notification"
+        >
+          +
+        </button>
+      </span>
     </p>
     <div class="input-actions">
       <div class="input-action-wrapper">
@@ -39,5 +49,29 @@
       </div>
 -->
     </div>
+
+    <h4>Alerts</h4>
+    <mat-accordion *ngFor="let alert of input.inputnotification">
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            style="display: flex; justify-content: space-between"
+          >
+            {{ alert.name }}
+            <mat-slide-toggle [checked]="alert.isTurnOn">
+              Turn on/off
+            </mat-slide-toggle>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="action-textarea">
+          <span>
+            Send when value from sensor is
+            <strong>{{ alert.condition }}</strong> from
+            <strong>{{ alert.threshold }}</strong
+            >. Sent email to <strong>{{ alert.email }}</strong>
+          </span>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
 </div>

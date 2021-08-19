@@ -15,6 +15,10 @@ urlpatterns = [
     path('set_value/', views.set_value),
     path('get_output_value', views.get_output_value),
     path('get_input_value', views.get_input_value),
+    path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'post':'create'})),
+    path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'get':'list'})),
+    path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'delete':'delete'})),
+    path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'put':'put'})),
 
     path('device/output/<int:output_id>/action', views.AtionViewSet.as_view({'post':'create'})),
     path('switch_lamp/', views.switch_lamp),

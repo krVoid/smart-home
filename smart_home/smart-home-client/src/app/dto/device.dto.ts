@@ -13,6 +13,7 @@ export interface InputDto {
   description?: string;
   id: number;
   inputId: any;
+  inputnotification?: any[];
 }
 
 export interface OutputDto {

@@ -1,8 +1,8 @@
 from django.http import HttpResponse, Http404
 from rest_framework.response import Response
 from rest_framework import permissions
-from .models import Device, DeviceInput, DeviceOutput, DeviceOutputAction
-from .serializers import DeviceSerializer, DeviceOutputActionSerializer,DeviceInputSerializer, DeviceOutputSerializer
+from .models import Device, DeviceInput, DeviceOutput, DeviceOutputAction,DeviceInputNotification
+from .serializers import DeviceSerializer,DeviceInputNotificationSerializer,DeviceOutputActionSerializer,DeviceInputSerializer, DeviceOutputSerializer
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 import requests
@@ -13,12 +13,110 @@ from . import fuzzyLightControll
 import numpy as np
 import time, threading
 import json
+from threading import Thread, Lock
+import time
+import sys
+from django.apps import AppConfig
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from smtplib import SMTPException
+from django.core.mail import send_mail
+from django.conf import settings
 
 auto_lght_enabled = False
 auto_light_thread = None
+class Notifier:
+    def __init__(self):
+        self.notifications = DeviceInputNotification.objects.filter(isTurnOn = True)
+        self.lock = Lock()
+        #pobranie notyfikacji
+
+    def add_notification(self, notification):
+        self.lock.acquire()
+        try:
+            # tutaj wklej wszystko zwiazane z dodaniem notyfikacji
+            self.notifications.append(notification)
+        finally:
+            self.lock.release()
+
+    def remove_notification(self, notification_id):
+        self.lock.acquire()
+        try:
+            # tutaj wklej wszystko zwiazane z usuwaniem notyfikacji
+            pass #dodac usuwanie powiadomienia
+        finally:
+           self.lock.release()
+
+    def main_loop(self):
+        while True:
+            time.sleep(1)
+            self.lock.acquire()
+            try:
+                self.notify()
+            finally:
+                self.lock.release()
+
+    def get_sensor_value(self, input_id, device_id):
+        device = Device.objects.get(pk=device_id)
+        response = False
+        url = device.url + "/sensor/"+str(input_id)
+        url = url.replace("//sensor", "/sensor")
+        response = requests.post(url)
+        print('get', url, response.text)
+        return response.text
+
+    def notify(self):
+        for notification in self.notifications:
+            # sprawdz i wyslij powiadomienie
+            print("sprawdzenie i wyslanie")
+            input = DeviceInput.objects.filter(pk=notification.deviceIntput_id).first()
+            inputValue = self.get_sensor_value( input.inputId, input.device_id)
+            # print(input.device_id, inputValue)
+            if notification.condition == "EQUAL":
+                if float(inputValue) == float(notification.threshold):
+                    send_email(notification.email, 's', notification.name)
+            elif notification.condition == "BIGGER_OR_EQUAL":
+                if float(inputValue) >= float(notification.threshold):
+                    send_email(notification.email, 's', notification.name)
+            elif notification.condition == "SMALLER_OR_EQUAL":
+                if float(inputValue) <= float(notification.threshold):
+                    send_email(notification.email, 's', notification.name)
+            elif notification.condition == "SMALLER":
+                if float(inputValue) < float(notification.threshold):
+                    send_email(notification.email, 's', notification.name)
+            elif notification.condition == "BIGGER":
+                if float(inputValue) > float(notification.threshold):
+                    send_email(notification.email, 's', notification.name)
+            
+                
+
+
+notifier = Notifier()
+# notifier.add_notification("dupa")
+t = Thread(target = notifier.main_loop)
+t.start()
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
+
+def send_email(email_to, message, subject):
+    email_from = 'redsmallchair@gmail.com'
+    # html = render_to_string('smart_home/smart_home_api/messageTemplates/email.html', {'text': message})
+    # text = render_to_string('smart_home/smart_home_api/messageTemplates/email.txt', {'text': message})
+    text = 'This is an important message.'
+    html = '<p>This is an <strong>important</strong> message.</p>'
+    send_mail(subject, text, settings.EMAIL_HOST_USER, [email_to], fail_silently=False)
+
+    # msg = EmailMultiAlternatives(subject, text, email_from, [email_to])
+    # msg.attach_alternative(html, "text/html")
+    # try:
+    #     msg.send()
+    #     return True
+    # except SMTPException as e:
+    #     print('There was an error sending an email: ', e)
+    #     return False
+
+
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -286,3 +384,78 @@ class AtionViewSet(viewsets.ModelViewSet):
         snippet = self.get_object(pk)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+        
+def get_sensor_value(input_id, device_id):
+    device = Device.objects.get(pk=device_id)
+    response = False
+    url = device.url + "/sensor/"+str(input_id)
+    url = url.replace("//sensor", "/sensor")
+    response = requests.post(url)
+    print(response.text)
+    return response.text
+
+
+def check_notification():
+    notifications = DeviceInputNotification.objects.filter(isTurnOn = True)
+    for alert in notifications:
+        print(alert)
+        input = DeviceInput.objects.filter(pk=alert.deviceIntput_id).first()
+        print(input)
+        # current_value = get_sensor_value(input.id, input.inputId)
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = DeviceInputNotificationSerializer
+   
+    def get_queryset(self, input_id):
+        return DeviceInputNotification.objects.filter(deviceIntput=input_id)
+
+    def get_object(self, pk):
+            try:
+                return DeviceInputNotification.objects.get(pk=pk)
+            except Device.DoesNotExist:
+                raise Http404
+
+    @staticmethod
+    def create(self,device_id, input_id):
+        serializer = DeviceInputNotificationSerializer(data=self.data)
+        output_instance = DeviceInput.objects.filter(device_id=device_id, inputId=input_id).first()
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(deviceIntput=output_instance)
+        notifier.add_notification(serializer)
+        return Response(serializer.data)
+
+    @staticmethod
+    def put(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = DeviceInputNotificationSerializer(snippet, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+
+
+# class MyAppConfig(AppConfig):
+#     name = 'smart_home'
+
+#     def ready(self):
+        
+
+# if _name_ == "_main_":
+#     notifier = Notifier()
+#     notifier.add_notification("dupa")
+#     t = Thread(target = notifier.main_loop)
+#     t.start()

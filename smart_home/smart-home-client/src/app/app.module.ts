@@ -28,6 +28,9 @@ import { OutputsGridComponent } from './components/add-device/outputs-grid.compo
 import { OutputComponent } from './components/output/output.component';
 import { AdvancedActionsComponent } from './components/add-device/actions.component';
 import { InputComponent } from './components/input/input.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { NotificationModalComponent } from './components/input/notification/notification.component';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -44,6 +47,7 @@ import { InputComponent } from './components/input/input.component';
     OutputsGridComponent,
     OutputComponent,
     InputComponent,
+    NotificationModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,7 +62,9 @@ import { InputComponent } from './components/input/input.component';
     MatSlideToggleModule,
     FormsModule,
     MatSidenavModule,
+    MatDialogModule,
     MatExpansionModule,
+    MatSelectModule,
   ],
   providers: [
     {
@@ -76,6 +82,7 @@ import { InputComponent } from './components/input/input.component';
       multi: true,
     },
   ],
+  entryComponents: [NotificationModalComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

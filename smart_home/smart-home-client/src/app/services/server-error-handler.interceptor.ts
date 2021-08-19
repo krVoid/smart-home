@@ -22,7 +22,7 @@ export class ServerErrorHandlerInterceptor implements HttpInterceptor {
         if (error.error instanceof ErrorEvent) {
           return throwError(error);
         }
-        alert(JSON.stringify(error.error));
+        // alert(JSON.stringify(error.error));
         return NEVER;
       })
     );

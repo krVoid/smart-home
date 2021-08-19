@@ -39,6 +39,19 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/set_value/`, switchL)
       .toPromise();
   }
+
+  //notification
+  public addNotification(
+    newNotification: any,
+    inputId: any,
+    deviceId: any
+  ): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/device/${deviceId}/input/${inputId}/notification`,
+      newNotification
+    );
+  }
+
   //to testing
   public getOtuputValue(switchL: any): Promise<boolean> {
     return this.http

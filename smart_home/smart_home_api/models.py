@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.fields import SmallIntegerField
 
 
 class Device(models.Model):
     name = models.CharField(max_length=30, unique=True)
     url = models.CharField(max_length=30, unique=True)
-
 
 class DeviceInput(models.Model):
     name = models.CharField(max_length=30)
@@ -15,6 +15,24 @@ class DeviceInput(models.Model):
 
     class Meta:
         unique_together = (("device", "name"),)  
+
+class DeviceInputNotification(models.Model):
+
+    class NotificationCondition(models.TextChoices):
+        EQUAL = "EQUAL"
+        BIGGER_OR_EQUAL = "BIGGER_OR_EQUAL"
+        SMALLER_OR_EQUAL = "SMALLER_OR_EQUAL"
+        SMALLER = "SMALLER"
+        BIGGER = "BIGGER"
+
+    name = models.CharField(max_length=30)
+    deviceIntput = models.ForeignKey(DeviceInput, related_name="inputnotification", on_delete=models.CASCADE)
+    description = models.CharField(max_length=230,blank=True, null=True)
+    email = models.TextField(default='/')
+    condition = models.CharField(choices=NotificationCondition.choices, default=NotificationCondition.EQUAL, max_length=50)
+    threshold = models.IntegerField(default=1)
+    isTurnOn = models.BooleanField(default=True)
+
 
 
 class DeviceOutput(models.Model):

@@ -1,0 +1,83 @@
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="modelForm">
+    <h2>New notification</h2>
+    <div>
+      <mat-form-field>
+        <input
+          matInput
+          type="text"
+          id="name"
+          placeholder="Name"
+          autocomplete="off"
+          formControlName="name"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          type="text"
+          id="name"
+          placeholder="Description"
+          autocomplete="off"
+          formControlName="description"
+        />
+      </mat-form-field>
+    </div>
+    <h4>Send when value from sensor is</h4>
+    <div>
+      <mat-form-field>
+        <!--  <input
+          matInput
+          id="condition"
+          placeholder="condition"
+          formControlName="condition"
+          required
+        />-->
+        <mat-select
+          matInput
+          id="condition"
+          placeholder="condition"
+          formControlName="condition"
+          required
+        >
+          <mat-option *ngFor="let food of foods" [value]="food.value">
+            {{ food.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <h4>from:</h4>
+      <mat-form-field>
+        <input
+          matInput
+          id="threshold"
+          placeholder="threshold"
+          formControlName="threshold"
+          type="number"
+          required
+        />
+      </mat-form-field>
+    </div>
+    <h4>Send alert to:</h4>
+    <mat-form-field>
+      <input
+        matInput
+        id="email"
+        placeholder="Email"
+        formControlName="email"
+        required
+      />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="true"
+    (click)="save()"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

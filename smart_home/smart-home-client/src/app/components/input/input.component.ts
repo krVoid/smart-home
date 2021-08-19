@@ -1,10 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { throwMatDuplicatedDrawerError } from '@angular/material/sidenav';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, timer } from 'rxjs';
 import { concatMap, takeUntil } from 'rxjs/operators';
 import { InputDto } from 'src/app/dto';
 import { ApiService } from 'src/app/services';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationModalComponent } from './notification/notification.component';
 
 @Component({
   selector: 'app-input',
@@ -20,7 +21,11 @@ export class InputComponent implements OnDestroy {
   public currentStatus: any = 0;
   private destroyPolling$: Subject<void> = new Subject();
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(
+    public dialog: MatDialog,
+    private apiService: ApiService,
+    private router: Router
+  ) {}
 
   public async toogleShowStatus(event: any): Promise<void> {
     console.log(event);
@@ -42,6 +47,19 @@ export class InputComponent implements OnDestroy {
     } else {
       this.destroyPolling$.next();
     }
+  }
+
+  public addNotification(input: InputDto): void {
+    const dialogRef = this.dialog.open(NotificationModalComponent, {
+      data: {
+        inputId: this.input.inputId,
+        deviceId: this.deviceId,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
   public ngOnDestroy(): void {
