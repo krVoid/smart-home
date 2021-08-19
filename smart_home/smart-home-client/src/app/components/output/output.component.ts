@@ -36,6 +36,13 @@ export class OutputComponent implements OnInit {
     event.stopPropagation();
   }
 
+  public async turnOnOutput(): Promise<void> {
+    await this.apiService.turnOn({
+      id: this.deviceId,
+      outputId: this.output.outputId,
+    });
+  }
+
   public async toggleOutput(event: any): Promise<void> {
     console.log(event);
 

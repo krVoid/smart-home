@@ -14,7 +14,7 @@
       >
         {{ action.name }}
       </div>-->
-      <div class="output-action-wrapper">
+      <div class="output-action-wrapper" *ngIf="output.isBinary">
         <mat-slide-toggle
           color="primary"
           [(ngModel)]="turnOn"
@@ -22,23 +22,40 @@
           >Turn on/off</mat-slide-toggle
         >
       </div>
-      <div class="output-action-wrapper" *ngIf="!output.isBinary">
+      <div class="output-action-wrapper" *ngIf="!output.isBinary && output.max">
         <mat-form-field style="width: 100%">
           <input
             matInput
-            placeholder="Set value from 0-255"
+            placeholder="{{
+              'Set value from ' + output.min + '-' + output.max
+            }}"
             [(ngModel)]="newValue"
           />
           <button
             mat-raised-button
             matSuffix
             color="primary"
+            style="min-width: 30px !important"
             (click)="setNewValue(deviceId, $event)"
           >
-            Update
+            ->
           </button>
         </mat-form-field>
       </div>
+      <div
+        class="output-action-wrapper"
+        *ngIf="!output.isBinary && !output.max"
+      >
+        <button
+          mat-raised-button
+          matSuffix
+          color="primary"
+          (click)="turnOnOutput()"
+        >
+          Turn on
+        </button>
+      </div>
+
       <!--  <div class="output-action-wrapper" *ngIf="output.isBinary">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
