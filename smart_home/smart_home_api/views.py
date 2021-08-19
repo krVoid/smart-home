@@ -224,8 +224,7 @@ def update_device(request):
         response = False
         r_device_id = request.data['id']
         device = Device.objects.get(pk=r_device_id)   
-        
-        url = request.data['url'] + '/register'
+        url = device.url + '/register'
         url = url.replace("//register", "/register")
         response =requests.get(url)
         response = response.text.replace("\'", "\"").replace(",]", "]")
