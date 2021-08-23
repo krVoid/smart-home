@@ -40,6 +40,22 @@ export class ApiService {
       .toPromise();
   }
 
+  public createAction(deviceId: any, data: any): Promise<any> {
+    return this.http
+      .post<any>(`${this.apiUrl}/device/${deviceId}/action`, data)
+      .toPromise();
+  }
+
+  public getDeviceActions(deviceId: any) {
+    return this.http.get<any>(`${this.apiUrl}/device/${deviceId}/action`);
+  }
+
+  public editAction(deviceId: any, actionID: any, data: any): Promise<any> {
+    return this.http
+      .put<any>(`${this.apiUrl}/device/${deviceId}/action/${actionID}`, data)
+      .toPromise();
+  }
+
   //notification
   public addNotification(
     newNotification: any,

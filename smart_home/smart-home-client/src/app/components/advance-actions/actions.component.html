@@ -1,0 +1,103 @@
+<div>
+  <div>
+    <h3>Advanced actions</h3>
+
+    <button
+      type="button"
+      class="add-puch__icon"
+      (click)="addAction()"
+      data-toggle="tooltip"
+      data-placement="top"
+      title="Add action"
+    >
+      <i class="fa fa-plus"></i>
+    </button>
+  </div>
+  <div>
+    <form [formGroup]="modelForm">
+      <mat-accordion>
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-form-field>
+                <input
+                  matInput
+                  type="text"
+                  id="name"
+                  placeholder="name"
+                  autocomplete="off"
+                  formControlName="name"
+                  required
+                />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  id="description"
+                  placeholder="description"
+                  formControlName="description"
+                  required
+                />
+              </mat-form-field>
+              <mat-slide-toggle
+                formControlName="isTurnOn"
+                [checked]="isAutoLamp"
+              >
+                Turn on
+              </mat-slide-toggle>
+              <mat-form-field *ngIf="device && device.deviceinput.length > 0">
+                <mat-select
+                  matInput
+                  multiple
+                  id="inputs"
+                  placeholder="inputs"
+                  formControlName="inputs"
+                  required
+                >
+                  <mat-option
+                    *ngFor="let input of device.deviceinput"
+                    [value]="input.id"
+                  >
+                    {{ input.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field *ngIf="device && device.deviceoutput.length > 0">
+                <mat-select
+                  matInput
+                  multiple
+                  id="outputs"
+                  placeholder="outputs"
+                  formControlName="outputs"
+                  required
+                >
+                  <mat-option
+                    *ngFor="let outputs of device.deviceoutput"
+                    [value]="outputs.id"
+                  >
+                    {{ outputs.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="action-textarea">
+            <strong>def custom_func(inputs, outputs):</strong>
+            <textarea formControlName="content"></textarea>
+
+            <strong> return outputs</strong>
+            <button
+              mat-raised-button
+              matSuffix
+              color="primary"
+              (click)="onSave()"
+            >
+              Save
+            </button>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </form>
+  </div>
+</div>

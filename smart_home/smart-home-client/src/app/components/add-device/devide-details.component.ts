@@ -55,8 +55,8 @@ import { ApiService } from 'src/app/services';
       *ngIf="device && device.deviceoutput"
       [outputs]="device.deviceoutput"
     ></app-outputs-grid> -->
-    <!--    <app-actions></app-actions>
- <app-inputs-grid
+    <!--  <app-actions *ngIf="device && deviceId" [device]="device"></app-actions> -->
+    <!--  <app-inputs-grid
       *ngIf="device && device.deviceinput"
       [inputs]="device.deviceinput"
     ></app-inputs-grid>

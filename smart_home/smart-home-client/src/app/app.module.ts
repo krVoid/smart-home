@@ -26,7 +26,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { InputsGridComponent } from './components/add-device/inputs-grid.component';
 import { OutputsGridComponent } from './components/add-device/outputs-grid.component';
 import { OutputComponent } from './components/output/output.component';
-import { AdvancedActionsComponent } from './components/add-device/actions.component';
+import { AdvancedActionsComponent } from './components/advance-actions/actions.component';
 import { InputComponent } from './components/input/input.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NotificationModalComponent } from './components/input/notification/notification.component';

@@ -1,11 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.fields import SmallIntegerField
+from django.contrib.postgres.fields import ArrayField
 
 
 class Device(models.Model):
     name = models.CharField(max_length=30, unique=True)
     url = models.CharField(max_length=30, unique=True)
+    isAutoTurnOn = models.BooleanField(default=False)
+    isSmartLight = models.BooleanField(default=False)
 
 class DeviceInput(models.Model):
     name = models.CharField(max_length=30)
@@ -31,7 +34,7 @@ class DeviceInputNotification(models.Model):
     email = models.TextField(default='/')
     condition = models.CharField(choices=NotificationCondition.choices, default=NotificationCondition.EQUAL, max_length=50)
     threshold = models.IntegerField(default=1)
-    isTurnOn = models.BooleanField(default=True)
+    isTurnOn = models.BooleanField(default=False)
 
 
 
@@ -48,18 +51,18 @@ class DeviceOutput(models.Model):
         unique_together = (("device", "name"),)  
 
 
-class DeviceOutputAction(models.Model):
-
-    class ActionType(models.TextChoices):
-        POST = 'POST'
-        GET = 'GET'
-
+class DeviceAdvanceAction(models.Model):
+    device = models.ForeignKey(Device, related_name="deviceaction", on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
-    deviceOutput = models.ForeignKey(DeviceOutput, related_name="outputaction", on_delete=models.CASCADE)
     description = models.CharField(max_length=230, null = True)
-    url = models.TextField(default='/')
-    type = models.CharField(choices=ActionType.choices, default=ActionType.GET, max_length=50)
-    parameters = models.TextField(blank=True, null=True)
+    isTurnOn = models.BooleanField(default=False)
+    inputs = ArrayField(models.IntegerField() ,null = True)
+    outputs = ArrayField(models.IntegerField(), null = True)
+    content = models.CharField(max_length=10030)
+
+    # url = models.TextField(default='/')
+    # type = models.CharField(choices=ActionType.choices, default=ActionType.GET, max_length=50)
+    # parameters = models.TextField(blank=True, null=True)
 
     class Meta:
-        unique_together = (("deviceOutput", "name"),)  
+        unique_together = (("device", "name"),)  

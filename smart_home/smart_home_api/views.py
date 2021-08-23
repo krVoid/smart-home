@@ -1,8 +1,9 @@
+from io import StringIO
 from django.http import HttpResponse, Http404
 from rest_framework.response import Response
 from rest_framework import permissions
-from .models import Device, DeviceInput, DeviceOutput, DeviceOutputAction,DeviceInputNotification
-from .serializers import DeviceSerializer,DeviceInputNotificationSerializer,DeviceOutputActionSerializer,DeviceInputSerializer, DeviceOutputSerializer
+from .models import Device, DeviceInput, DeviceOutput, DeviceInputNotification, DeviceAdvanceAction
+from .serializers import DeviceSerializer,DeviceInputNotificationSerializer,DeviceInputSerializer, DeviceOutputSerializer, DeviceAdvanceActionSerializer
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 import requests
@@ -22,6 +23,7 @@ from django.core.mail import EmailMultiAlternatives
 from smtplib import SMTPException
 from django.core.mail import send_mail
 from django.conf import settings
+import sys
 
 auto_lght_enabled = False
 auto_light_thread = None
@@ -168,8 +170,8 @@ def get_output_value(request):
         response = False
         url = device.url + "/output/"+str(output_id)+"/get-value"
         url = url.replace("//output", "/output")
-        response = requests.post(url)
-        print(response)
+        # response = requests.post(url)
+        # print(response)
         return Response(response)
     except Device.DoesNotExist:
         raise Http404
@@ -348,28 +350,82 @@ class DeviceViewSetDetail(APIView):
 
 #chyba do wywalenia
 class AtionViewSet(viewsets.ModelViewSet):
-    serializer_class = DeviceOutputActionSerializer
+    serializer_class = DeviceAdvanceActionSerializer
+
+    def get_queryset(self, device_id):
+        return DeviceAdvanceAction.objects.filter(device_id=device_id)
+
     def get_object(self, pk):
             try:
-                return DeviceOutputAction.objects.get(pk=pk)
+                return DeviceAdvanceAction.objects.get(pk=pk)
             except Device.DoesNotExist:
                 raise Http404
     @staticmethod
-    def create(self, output_id):
-        serializer = DeviceOutputActionSerializer(data=self.data)
-        output_instance = DeviceOutput.objects.filter(id=output_id).first()
+    def create(self, device_id):
+        serializer = DeviceAdvanceActionSerializer(data=self.data)
+        output_instance = Device.objects.filter(id=device_id).first()
         if not serializer.is_valid():
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(deviceOutput=output_instance)
+        serializer.save(device=output_instance)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        serializer = DeviceOutputActionSerializer(snippet, data=request.data)
+    @staticmethod
+    def put(self, device_id, pk, format=None):
+        snippet = DeviceAdvanceAction.objects.get(pk=pk)
+        serializer = DeviceAdvanceActionSerializer(snippet, data=self.data)
+
         if serializer.is_valid():
             serializer.save()
+            if(serializer.data["isTurnOn"]):
+                device = Device.objects.get(pk=device_id)
+                inputs_values = []
+                outputs = []
+                content = serializer.data["content"]
+                content = "\n    ".join(content.splitlines())
+                content = "def execute(inputs): \n    " 
+                content.append("\nexecute(")
+                # content.replace("\n", "\n \t")
+                for input in serializer.data["inputs"]:
+                    url = device.url + "/sensor/"+str(input)
+                    url = url.replace("//sensor", "/sensor")
+                    # response = requests.post(url)
+                    # print(response.text)
+                    # inputs_values.append(response.text)
+                print(content)
+                codeOut = StringIO()
+                codeErr = StringIO()
+
+                # capture output and errors
+                sys.stdout = codeOut
+                sys.stderr = codeErr
+
+                exec(content)
+
+                # restore stdout and stderr
+                sys.stdout = sys.__stdout__
+                sys.stderr = sys.__stderr__
+
+                s = codeErr.getvalue()
+
+                print("error:\n%s\n" % s)
+
+                s = codeOut.getvalue()
+
+                print("output:\n%s" % s)
+
+                codeOut.close()
+                codeErr.close()
+
             return Response(serializer.data)
+        
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def delete(self, request, pk, format=None):
         snippet = self.get_object(pk)

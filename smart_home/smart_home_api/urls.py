@@ -19,8 +19,10 @@ urlpatterns = [
     path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'get':'list'})),
     path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'delete':'delete'})),
     path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'put':'put'})),
-
-    path('device/output/<int:output_id>/action', views.AtionViewSet.as_view({'post':'create'})),
+    path('device/<int:device_id>/action', views.AtionViewSet.as_view({'post':'create'})),
+    path('device/<int:device_id>/action/<int:pk>', views.AtionViewSet.as_view({'put':'put'})),
+    path('device/<int:device_id>/action', views.AtionViewSet.as_view({'get':'list'})),
+   
     path('switch_lamp/', views.switch_lamp),
     path('brightness_lamp/', views.brightness_lamp),
     path('update_device/', views.update_device),

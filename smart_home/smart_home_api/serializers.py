@@ -1,12 +1,14 @@
 from rest_framework import serializers
-from .models import Device,DeviceOutputAction, DeviceOutput, DeviceInput,DeviceInputNotification
+from .models import Device, DeviceAdvanceAction, DeviceOutput, DeviceInput,DeviceInputNotification
 
 
-class DeviceOutputActionSerializer(serializers.ModelSerializer):
+
+class DeviceAdvanceActionSerializer(serializers.ModelSerializer):
 
     class Meta: 
-        model = DeviceOutputAction
-        fields = ('name', 'id','description','url', 'type', 'parameters')
+        model = DeviceAdvanceAction
+        fields = ('name', 'id','description','isTurnOn', 'outputs', 'inputs', 'content')
+
 
 class DeviceInputNotificationSerializer(serializers.ModelSerializer):
 
@@ -15,11 +17,10 @@ class DeviceInputNotificationSerializer(serializers.ModelSerializer):
         fields = ('name', 'id','description', "email", "condition","isTurnOn", "threshold")
 
 class DeviceOutputSerializer(serializers.ModelSerializer):
-    outputaction =  DeviceOutputActionSerializer(many= True, read_only=True)
 
     class Meta: 
         model = DeviceOutput
-        fields = ('name', 'id','description','isBinary', 'min', 'max', "outputId", "outputaction")
+        fields = ('name', 'id','description','isBinary', 'min', 'max', "outputId")
 
 class DeviceInputSerializer(serializers.ModelSerializer):
     inputnotification = DeviceInputNotificationSerializer(many= True, read_only=True)
