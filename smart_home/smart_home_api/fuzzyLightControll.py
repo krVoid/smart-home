@@ -67,11 +67,11 @@ def fuzzy_controller(INPUT_ILLUMINANCE):
 
     # plt.tight_layout()
 
-    ill_level_v_lo = fuzz.interp_membership(x_illuminance, qilluminance_v_lo, INPUT_ILLUMINANCE)
-    ill_level_lo = fuzz.interp_membership(x_illuminance, qilluminance_lo, INPUT_ILLUMINANCE)
-    ill_level_md = fuzz.interp_membership(x_illuminance, qilluminance_md, INPUT_ILLUMINANCE)
-    ill_level_hi = fuzz.interp_membership(x_illuminance, qilluminance_hi, INPUT_ILLUMINANCE)
-    ill_level_v_hi = fuzz.interp_membership(x_illuminance, qilluminance_v_hi, INPUT_ILLUMINANCE)
+    ill_level_v_lo = fuzz.interp_membership(x_illuminance, qilluminance_v_lo, INPUT_ILLUMINANCE[0])
+    ill_level_lo = fuzz.interp_membership(x_illuminance, qilluminance_lo, INPUT_ILLUMINANCE[0])
+    ill_level_md = fuzz.interp_membership(x_illuminance, qilluminance_md, INPUT_ILLUMINANCE[0])
+    ill_level_hi = fuzz.interp_membership(x_illuminance, qilluminance_hi, INPUT_ILLUMINANCE[0])
+    ill_level_v_hi = fuzz.interp_membership(x_illuminance, qilluminance_v_hi, INPUT_ILLUMINANCE[0])
 
     serv_level_v_lo = fuzz.interp_membership(x_timeOfDay, timeOfDay_v_lo, INPUT_TIME)
     serv_level_lo = fuzz.interp_membership(x_timeOfDay, timeOfDay_lo, INPUT_TIME)

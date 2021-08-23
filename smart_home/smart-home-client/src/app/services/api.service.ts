@@ -22,7 +22,7 @@ export class ApiService {
   public registerDevices(newDevice: DeviceDto): Observable<boolean> {
     return this.http.post<any>(`${this.apiUrl}/register_device/`, newDevice);
   }
-  public updateDevices(newDevice: { id: string }): Observable<boolean> {
+  public updateDevices(newDevice: any): Observable<boolean> {
     return this.http.post<any>(`${this.apiUrl}/update_device/`, newDevice);
   }
 

@@ -110,6 +110,59 @@ def send_email(email_to, message, subject):
     # send_mail(subject, text, settings.EMAIL_HOST_USER, [email_to], fail_silently=False)
 
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def auto_lamp(request):
+    try:
+        r_device_id = request.data['id']
+        r_device_state = request.data['state']
+        device = Device.objects.get(pk=r_device_id)
+        response = False
+
+        global auto_light_thread
+        if auto_light_thread is None:
+            auto_light_thread = threading.Thread(target=change_lamp_value, args=(device,))
+            auto_light_thread.start()
+
+        if r_device_state:
+            global auto_lght_enabled
+            auto_lght_enabled = True
+            
+        else:
+            auto_lght_enabled = False
+            outputs = DeviceOutput.objects.filter(device_id = r_device_id)
+            for uoutput in outputs:
+                response = False
+                url = device.url + "/output/"+str(uoutput.outputId)+"/turn-off"
+                url = url.replace("//output", "/output")
+                response = requests.post(url)
+        return Response(response)
+    except Device.DoesNotExist:
+        raise Http404
+
+def change_lamp_value(device):
+    while True:
+        global auto_lght_enabled
+        if auto_lght_enabled:
+            inputs_vlues = []
+            inputs = DeviceInput.objects.filter(device_id = device.id)
+            for input in inputs:
+                url = device.url + "/sensor/"+str(input.inputId)
+                url = url.replace("//sensor", "/sensor")
+                response = requests.post(url)
+                inputs_vlues.append(response.text)
+            newIlluminance = fuzzyLightControll.fuzzy_controller(inputs_vlues)
+            print('Dane z czujnika: ', inputs_vlues)
+            print('Wynik Fuzzy Controller: ', newIlluminance)
+            outputs = DeviceOutput.objects.filter(device_id = device.id)
+            for uoutput in outputs:
+                response = False
+                url = device.url + "/output/"+str(uoutput.outputId)+"/set-value"
+                url = url.replace("//output", "/output")
+                response = requests.post(url, str(newIlluminance))
+            # response = requests.post(device.url + 'brightness', str(np.float64(newIlluminance).item()))
+        time.sleep(1)
+
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -234,7 +287,6 @@ def update_device(request):
         DeviceInput.objects.filter(device_id=r_device_id).delete()
         DeviceOutput.objects.filter(device_id=r_device_id).delete()
         # deviceSerializer = DeviceSerializer(data=request.data)
-
         # device = deviceSerializer.save()
         for inputDevice in responseJson["inputs"]:
             inputSerializer = DeviceInputSerializer(data=inputDevice)
@@ -244,6 +296,10 @@ def update_device(request):
             outputSerializer = DeviceOutputSerializer(data=outputDevice)
             if outputSerializer.is_valid():
                 outputSerializer.save(device=device)
+
+        serializer = DeviceSerializer(device, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
         return Response(response)
     except Device.DoesNotExist:
         raise Http404
@@ -281,30 +337,30 @@ def brightness_lamp(request):
         raise Http404
 
 
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def auto_lamp(request):
-    try:
-        r_device_id = request.data['id']
-        r_device_state = request.data['state']
-        device = Device.objects.get(pk=r_device_id)
-        response = False
+# @api_view(['POST'])
+# @permission_classes([permissions.IsAuthenticated])
+# def auto_lamp(request):
+#     try:
+#         r_device_id = request.data['id']
+#         r_device_state = request.data['state']
+#         device = Device.objects.get(pk=r_device_id)
+#         response = False
 
-        global auto_light_thread
-        if auto_light_thread is None:
-            auto_light_thread = threading.Thread(target=tmp, args=(device.url,))
-            auto_light_thread.start()
+#         global auto_light_thread
+#         if auto_light_thread is None:
+#             auto_light_thread = threading.Thread(target=tmp, args=(device.url,))
+#             auto_light_thread.start()
 
-        if r_device_state:
-            global auto_lght_enabled
-            auto_lght_enabled = True
+#         if r_device_state:
+#             global auto_lght_enabled
+#             auto_lght_enabled = True
             
-        else:
-            auto_lght_enabled = False
-            response = requests.get(device.url + 'light-off')
-        return Response(response)
-    except Device.DoesNotExist:
-        raise Http404
+#         else:
+#             auto_lght_enabled = False
+#             response = requests.get(device.url + 'light-off')
+#         return Response(response)
+#     except Device.DoesNotExist:
+#         raise Http404
 
 def tmp(device_url):
     while True:
