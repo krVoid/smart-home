@@ -8,6 +8,7 @@ class Device(models.Model):
     name = models.CharField(max_length=30, unique=True)
     url = models.CharField(max_length=30, unique=True)
     isAutoTurnOn = models.BooleanField(default=False)
+    isAutoAirConditioner = models.BooleanField(default=False)
     isSmartLight = models.BooleanField(default=False)
 
 class DeviceInput(models.Model):

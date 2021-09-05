@@ -35,9 +35,15 @@ import { ApiService } from 'src/app/services';
       <mat-slide-toggle color="primary" formControlName="isSmartLight">
         isSmartLight
       </mat-slide-toggle>
+      <mat-slide-toggle color="primary" formControlName="isAutoAirConditioner">
+        isAutoAirConditioner
+      </mat-slide-toggle>
       <mat-slide-toggle
         color="primary"
-        *ngIf="modelForm.controls.isSmartLight.value"
+        *ngIf="
+          modelForm.controls.isSmartLight.value ||
+          modelForm.controls.isAutoAirConditioner.value
+        "
         (click)="switchLamp()"
         formControlName="isAutoTurnOn"
         >isAutoTurnOn</mat-slide-toggle
@@ -115,6 +121,7 @@ export class DeviceDetailsComponent {
       url: [''],
       isSmartLight: [false],
       isAutoTurnOn: [false],
+      isAutoAirConditioner: [false],
     });
     this.deviceId = this.route.snapshot.params.id;
     if (this.deviceId) {
@@ -122,6 +129,8 @@ export class DeviceDetailsComponent {
       this.apiService.getDevice(this.deviceId).subscribe((value) => {
         this.modelForm.controls.name.setValue(value.name);
         this.modelForm.controls.url.setValue(value.url);
+        this.modelForm.controls.name.disable();
+        this.modelForm.controls.url.disable();
         this.modelForm.controls.isSmartLight.setValue(value.isSmartLight);
         this.modelForm.controls.isAutoTurnOn.setValue(value.isAutoTurnOn);
         this.device = value;
@@ -160,12 +169,15 @@ export class DeviceDetailsComponent {
   }
   switchLamp() {
     if (this.deviceId) {
-      this.apiService
-        .setAutoLamp({
-          id: this.deviceId,
-          state: this.modelForm.controls.isAutoTurnOn.value,
-        })
-        .subscribe((v) => console.log(v));
+      if (this.modelForm.controls.isAutoAirConditioner) {
+      } else {
+        this.apiService
+          .setAutoLamp({
+            id: this.deviceId,
+            state: this.modelForm.controls.isAutoTurnOn.value,
+          })
+          .subscribe((v) => console.log(v));
+      }
     }
   }
 }
