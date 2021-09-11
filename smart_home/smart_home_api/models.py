@@ -3,10 +3,14 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.fields import SmallIntegerField
 from django.contrib.postgres.fields import ArrayField
 
+def nameFile(instance, filename):
+    return '/'.join(['images', str(instance.name), filename])
 
 class Device(models.Model):
     name = models.CharField(max_length=30, unique=True)
     url = models.CharField(max_length=30, unique=True)
+    iconName = models.CharField(max_length=30, blank=True, null=True)
+    image = models.ImageField(upload_to=nameFile, blank=True, null=True)
     isAutoTurnOn = models.BooleanField(default=False)
     isAutoAirConditioner = models.BooleanField(default=False)
     isSmartLight = models.BooleanField(default=False)

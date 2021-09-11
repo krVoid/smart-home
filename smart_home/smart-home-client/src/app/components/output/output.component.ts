@@ -18,11 +18,11 @@ export class OutputComponent implements OnInit {
   constructor(private apiService: ApiService, private router: Router) {}
 
   async ngOnInit() {
-    const t = await this.apiService.getOtuputValue({
-      id: this.deviceId,
-      outputId: this.output.outputId,
-    });
-    console.log(t);
+    // const t = await this.apiService.getOtuputValue({
+    //   id: this.deviceId,
+    //   outputId: this.output.outputId,
+    // });
+    // console.log(t);
   }
 
   public addAction() {}

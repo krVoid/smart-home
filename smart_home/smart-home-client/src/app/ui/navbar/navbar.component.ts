@@ -7,7 +7,11 @@ import { AuthService } from 'src/app/services';
   template: `
     <div class="navbar">
       <div class="navbar-icons">
-        <i class="navbar-right fa fa-user"> </i>
+        <i
+          class="navbar-right fa fa-user"
+          style="margin-right:15px; margin-left:10px"
+        >
+        </i>
         <h3 class="navbar-right" (click)="logout()">Logout</h3>
         <i class="navbar-left fa fa-home" (click)="emitToggleMenu()"></i>
       </div>

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DeviceDto } from '../dto';
@@ -19,8 +19,16 @@ export class ApiService {
   public getDevice(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/devicedevice/${id}/`);
   }
-  public registerDevices(newDevice: DeviceDto): Observable<boolean> {
-    return this.http.post<any>(`${this.apiUrl}/register_device/`, newDevice);
+  public registerDevices(newDevice: any): Observable<boolean> {
+    console.log(newDevice);
+    let headers = new HttpHeaders();
+    // headers = headers.set('Content-Type', 'multipart/form-data');
+    headers.append('Accept', 'application/json');
+
+    return this.http.post<any>(`${this.apiUrl}/register_device/`, newDevice, {
+      headers,
+      reportProgress: true,
+    });
   }
   public updateDevices(newDevice: any): Observable<boolean> {
     return this.http.post<any>(`${this.apiUrl}/update_device/`, newDevice);

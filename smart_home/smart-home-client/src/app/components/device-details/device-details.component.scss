@@ -1,0 +1,41 @@
+.details-container {
+  padding: 40px;
+  background-color: #eceef2;
+  color: #2f4c77;
+}
+
+.center {
+  text-align: center;
+  display: block;
+  margin-top: 30px;
+}
+
+// form {
+//   max-width: 300px;
+//   margin: auto;
+// }
+
+// mat-form-field {
+//   width: 100%;
+// }
+
+.actions {
+  text-align: center;
+}
+
+.details-icon {
+  font-size: 80px;
+  color: #b2b8bd;
+}
+.details-name {
+  font-weight: bold !important;
+}
+
+.details-url {
+  color: #b2b8bd;
+}
+form {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+}

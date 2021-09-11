@@ -1,0 +1,23 @@
+Turn:
+<!--<div modelForm="">
+  <mat-form-field *ngIf="device && device.deviceinput.length > 0">
+    <mat-select
+      matInput
+      multiple
+      id="inputs"
+      placeholder="Select output"
+      formControlName="inputs"
+      required
+    >
+      <mat-option *ngFor="let input of outputs" [value]="outputs.id">
+        {{ outputs.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>-->
+at
+<cron-editor
+  [(cron)]="cronExpression"
+  [disabled]="isCronDisabled"
+  [(options)]="cronOptions"
+></cron-editor>

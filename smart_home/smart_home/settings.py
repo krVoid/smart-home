@@ -107,6 +107,11 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     str(os.getenv("CLIENT_URL")),
 )
+DEFAULT_PARSER_CLASSES = (
+    'rest_framework.parsers.JSONParser',
+    'rest_framework.parsers.FormParser',
+    'rest_framework.parsers.MultiPartParser',
+),
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -194,6 +199,8 @@ INVITATIONS_LOGIN_REDIRECT = 'auth/token'
 
 SITE_ID = 1
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/' # 'http://myhost:port/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

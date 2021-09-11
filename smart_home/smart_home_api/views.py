@@ -251,8 +251,11 @@ def register_device(request):
     try:
         response = False
         deviceSerializer = DeviceSerializer(data=request.data)
+        file = request.data['image']
+        # image = Device.objects.create(image=file)
         if deviceSerializer.is_valid():
-            device = deviceSerializer.save()
+
+            device = deviceSerializer.save(image=file)
             url = request.data['url'] + '/register'
             url = url.replace("//register", "/register")
             response =requests.get(url)
@@ -268,6 +271,7 @@ def register_device(request):
                     inputSerializer.save(device=device)
 
             return Response(device.id)
+        print(deviceSerializer.errors)
         return Response(response)
     except Device.DoesNotExist:
         raise Http404
