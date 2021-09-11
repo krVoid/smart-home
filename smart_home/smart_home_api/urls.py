@@ -20,6 +20,11 @@ urlpatterns = [
     path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'delete':'delete'})),
     path('device/<int:device_id>/input/<int:input_id>/notification', views.NotificationViewSet.as_view({'put':'put'})),
     
+    path('device/<int:device_id>/output/<int:output_id>/automations', views.AutomationsViewSet.as_view({'post':'create'})),
+    path('device/<int:device_id>/output/<int:output_id>/automations', views.AutomationsViewSet.as_view({'get':'list'})),
+    path('device/<int:device_id>/output/<int:output_id>/automations', views.AutomationsViewSet.as_view({'delete':'delete'})),
+    path('device/<int:device_id>/output/<int:output_id>/automations', views.AutomationsViewSet.as_view({'put':'put'})),
+    
     # do wywalenia
     path('device/<int:device_id>/action', views.AtionViewSet.as_view({'post':'create'})),
     path('device/<int:device_id>/action/<int:pk>', views.AtionViewSet.as_view({'put':'put'})),

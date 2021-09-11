@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "~10.1.5",
     "@angular/router": "~10.1.5",
     "cron-editor": "^2.1.8",
+    "cronstrue": "^1.117.0",
     "font-awesome": "^4.7.0",
     "ngx-cron-editor": "^0.6.8",
     "rxjs": "~6.6.0",

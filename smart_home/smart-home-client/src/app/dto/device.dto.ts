@@ -25,4 +25,5 @@ export interface OutputDto {
   max?: number;
   id: number;
   outputaction: ActionDto[];
+  outputautomation?: any[];
 }

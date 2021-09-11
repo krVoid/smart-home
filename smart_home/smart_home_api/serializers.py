@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Device, DeviceAdvanceAction, DeviceOutput, DeviceInput,DeviceInputNotification
+from .models import Device, DeviceAdvanceAction, DeviceOutputAutomation, DeviceOutput, DeviceInput,DeviceInputNotification
 
 
 
@@ -16,11 +16,20 @@ class DeviceInputNotificationSerializer(serializers.ModelSerializer):
         model = DeviceInputNotification
         fields = ('name', 'id','description', "email", "condition","isTurnOn", "threshold")
 
+
+class DeviceOutputAutomationSerializer(serializers.ModelSerializer):
+
+    class Meta: 
+        model = DeviceOutputAutomation
+        fields = ('newValue', 'id', 'isTurnOn', 'cron')
+
+
 class DeviceOutputSerializer(serializers.ModelSerializer):
+    outputautomation = DeviceOutputAutomationSerializer(many= True, read_only=True)
 
     class Meta: 
         model = DeviceOutput
-        fields = ('name', 'id','description','isBinary', 'min', 'max', "outputId")
+        fields = ('name', 'id','description','isBinary', 'min', 'max', "outputId", "outputautomation")
 
 class DeviceInputSerializer(serializers.ModelSerializer):
     inputnotification = DeviceInputNotificationSerializer(many= True, read_only=True)

@@ -1,23 +1,35 @@
-Turn:
-<!--<div modelForm="">
-  <mat-form-field *ngIf="device && device.deviceinput.length > 0">
-    <mat-select
-      matInput
-      multiple
-      id="inputs"
-      placeholder="Select output"
-      formControlName="inputs"
-      required
-    >
-      <mat-option *ngFor="let input of outputs" [value]="outputs.id">
-        {{ outputs.name }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>-->
-at
-<cron-editor
-  [(cron)]="cronExpression"
-  [disabled]="isCronDisabled"
-  [(options)]="cronOptions"
-></cron-editor>
+<!--
+-->
+<div class="automations-container">
+  <div
+    style="display: flex; justify-content: space-between; margin-botton: 10px"
+  >
+    <div style="margin-bottom: 15px">
+      <h2 style="margin: 0">Automations</h2>
+      <span class="description">Click '+' to add new scenario.</span>
+    </div>
+    <button mat-mini-fab (click)="addAutomations()" title="Add automations">
+      <i class="fa fa-plus"></i>
+    </button>
+  </div>
+  <div>
+    <div *ngFor="let output of outputs">
+      <span *ngFor="let automate of output.outputautomation">
+        <div class="automation-label">
+          <div>
+            <span *ngIf="output.isBinary && automate.isTurnOn">Turn on </span>
+            <span *ngIf="output.isBinary && !automate.isTurnOn">Turn off </span>
+            <span *ngIf="!output.isBinary && output.max && automate.newValue"
+              >Set new value {{ automate.newValue }}
+            </span>
+            <span *ngIf="!output.isBinary && !output.max"
+              >Turn on {{ output.name }}
+            </span>
+            <span>{{ automate.cron | cronPipe }}</span>
+          </div>
+          <i class="fa fa-trash"></i>
+        </div>
+      </span>
+    </div>
+  </div>
+</div>

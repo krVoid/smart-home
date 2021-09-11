@@ -95,31 +95,45 @@
     <!--
 -->
   </form>
+  <div style="display: flex">
+    <div style="flex: 3">
+      <div *ngIf="device && device.deviceoutput" class="center">
+        <app-output
+          *ngFor="let outputValue of device.deviceoutput"
+          [output]="outputValue"
+          [deviceId]="device.id"
+        ></app-output>
+      </div>
 
-  <div *ngIf="device && device.deviceoutput" class="center">
-    <app-output
-      *ngFor="let outputValue of device.deviceoutput"
-      [output]="outputValue"
-      [deviceId]="device.id"
-    ></app-output>
-  </div>
+      <div *ngIf="device && device.deviceinput" class="center">
+        <app-input
+          *ngFor="let inputValue of device.deviceinput"
+          [input]="inputValue"
+          [deviceId]="device.id"
+        ></app-input>
+      </div>
+    </div>
+    <div
+      style="flex: 1"
+      *ngIf="device && device.deviceoutput && device.deviceoutput.length > 0"
+    >
+      <app-automations
+        [outputs]="device.deviceoutput"
+        [deviceId]="deviceId"
+      ></app-automations>
 
-  <div *ngIf="device && device.deviceinput" class="center">
-    <app-input
-      *ngFor="let inputValue of device.deviceinput"
-      [input]="inputValue"
-      [deviceId]="device.id"
-    ></app-input>
-  </div>
-  <app-automations></app-automations>
-  <!--   <app-outputs-grid
+      <div>
+        <!--   <app-outputs-grid
       *ngIf="device && device.deviceoutput"
       [outputs]="device.deviceoutput"
     ></app-outputs-grid> -->
-  <!--  <app-actions *ngIf="device && deviceId" [device]="device"></app-actions> -->
-  <!--  <app-inputs-grid
+        <!--  <app-actions *ngIf="device && deviceId" [device]="device"></app-actions> -->
+        <!--  <app-inputs-grid
       *ngIf="device && device.deviceinput"
       [inputs]="device.deviceinput"
     ></app-inputs-grid>
     {{ device | json }} -->
+      </div>
+    </div>
+  </div>
 </div>

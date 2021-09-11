@@ -2,8 +2,8 @@ from io import StringIO
 from django.http import HttpResponse, Http404
 from rest_framework.response import Response
 from rest_framework import permissions
-from .models import Device, DeviceInput, DeviceOutput, DeviceInputNotification, DeviceAdvanceAction
-from .serializers import DeviceSerializer,DeviceInputNotificationSerializer,DeviceInputSerializer, DeviceOutputSerializer, DeviceAdvanceActionSerializer
+from .models import Device, DeviceInput, DeviceOutput,DeviceOutputAutomation, DeviceInputNotification, DeviceAdvanceAction
+from .serializers import DeviceSerializer,DeviceOutputAutomationSerializer,DeviceInputNotificationSerializer,DeviceInputSerializer, DeviceOutputSerializer, DeviceAdvanceActionSerializer
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 import requests
@@ -552,6 +552,49 @@ class NotificationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+
+
+class AutomationsViewSet(viewsets.ModelViewSet):
+    serializer_class = DeviceOutputAutomationSerializer
+   
+    def get_queryset(self, output_id):
+        return DeviceOutputAutomation.objects.filter(deviceIntput=output_id)
+
+    def get_object(self, pk):
+            try:
+                return DeviceInputNotification.objects.get(pk=pk)
+            except Device.DoesNotExist:
+                raise Http404
+
+    @staticmethod
+    def create(self,device_id, output_id):
+        serializer = DeviceOutputAutomationSerializer(data=self.data)
+        output_instance = DeviceOutput.objects.filter(device_id=device_id, outputId=output_id).first()
+        print(output_instance)
+        if not serializer.is_valid():
+            print('ddd', serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(deviceOutput=output_instance)
+        return Response(serializer.data)
+
+    @staticmethod
+    def put(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        serializer = DeviceOutputAutomationSerializer(snippet, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        snippet = self.get_object(pk)
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 

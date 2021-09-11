@@ -13,11 +13,12 @@
 
       <span>
         <button
-          mat-mini-fab
+          mat-raised-button
+          color="accent"
           (click)="addNotification(input)"
           title="Add notification"
         >
-          +
+          Add Alert
         </button>
       </span>
     </p>
@@ -50,7 +51,9 @@
 -->
     </div>
 
-    <h4>Alerts</h4>
+    <h4 *ngIf="input.inputnotification && input.inputnotification.length > 0">
+      Alerts
+    </h4>
     <mat-accordion *ngFor="let alert of input.inputnotification">
       <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>

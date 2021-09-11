@@ -33,6 +33,9 @@ import { NotificationModalComponent } from './components/input/notification/noti
 import { MatSelectModule } from '@angular/material/select';
 import { AutomationsComponent } from './components/automations/automations.component';
 import { CronEditorModule } from 'cron-editor';
+import { AutomationsModalComponent } from './components/automations/automations-modal/automations-modal.component';
+import { MatSliderModule } from '@angular/material/slider';
+import { CronPipe } from './cron.utils';
 
 @NgModule({
   declarations: [
@@ -51,6 +54,8 @@ import { CronEditorModule } from 'cron-editor';
     InputComponent,
     NotificationModalComponent,
     AutomationsComponent,
+    AutomationsModalComponent,
+    CronPipe,
   ],
   imports: [
     BrowserModule,
@@ -69,6 +74,7 @@ import { CronEditorModule } from 'cron-editor';
     MatExpansionModule,
     MatSelectModule,
     CronEditorModule,
+    MatSliderModule,
   ],
   providers: [
     {

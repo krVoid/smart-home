@@ -76,6 +76,17 @@ export class ApiService {
     );
   }
 
+  public addAutomation(
+    newNotification: any,
+    inputId: any,
+    deviceId: any
+  ): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/device/${deviceId}/output/${inputId}/automations`,
+      newNotification
+    );
+  }
+
   //to testing
   public getOtuputValue(switchL: any): Promise<boolean> {
     return this.http

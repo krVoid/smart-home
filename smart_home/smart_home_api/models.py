@@ -55,6 +55,13 @@ class DeviceOutput(models.Model):
     class Meta:
         unique_together = (("device", "name"),)  
 
+class DeviceOutputAutomation(models.Model):
+    deviceOutput = models.ForeignKey(DeviceOutput, related_name="outputautomation", on_delete=models.CASCADE)
+    newValue = models.CharField(max_length=230,blank=True, null=True)
+    isTurnOn = models.BooleanField(default=False)
+    cron = models.CharField(max_length=230)
+
+
 
 class DeviceAdvanceAction(models.Model):
     device = models.ForeignKey(Device, related_name="deviceaction", on_delete=models.CASCADE)
