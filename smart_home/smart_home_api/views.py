@@ -251,11 +251,11 @@ def register_device(request):
     try:
         response = False
         deviceSerializer = DeviceSerializer(data=request.data)
-        file = request.data['image']
+        # file = request.data['image']
         # image = Device.objects.create(image=file)
         if deviceSerializer.is_valid():
 
-            device = deviceSerializer.save(image=file)
+            device = deviceSerializer.save()
             url = request.data['url'] + '/register'
             url = url.replace("//register", "/register")
             response =requests.get(url)

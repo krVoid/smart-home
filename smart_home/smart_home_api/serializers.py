@@ -90,9 +90,7 @@ class Base64ImageField(serializers.ImageField):
 class DeviceSerializer(serializers.ModelSerializer):
     deviceinput =  DeviceInputSerializer(many= True, read_only=True)
     deviceoutput =  DeviceOutputSerializer(many= True, read_only=True)
-    image = Base64ImageField(
-        max_length=None, use_url=True,
-    )
+
     class Meta: 
         model = Device
         fields = '__all__'

@@ -2,7 +2,7 @@
   <form [formGroup]="modelForm">
     <h2>New notification</h2>
     <div>
-      <mat-form-field>
+      <mat-form-field style="margin-right: 10px">
         <input
           matInput
           type="text"
@@ -24,7 +24,7 @@
         />
       </mat-form-field>
     </div>
-    <h4>Send when value from sensor is</h4>
+    <h3>Send when value from sensor is</h3>
     <div>
       <mat-form-field>
         <!--  <input
@@ -46,7 +46,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <h4>from:</h4>
+      <h3>from:</h3>
       <mat-form-field>
         <input
           matInput
@@ -58,7 +58,7 @@
         />
       </mat-form-field>
     </div>
-    <h4>Send alert to:</h4>
+    <h3>Send alert to:</h3>
     <mat-form-field>
       <input
         matInput
@@ -74,7 +74,7 @@
 <mat-dialog-actions align="end">
   <button
     mat-raised-button
-    color="primary"
+    color="accent"
     [mat-dialog-close]="true"
     (click)="save()"
   >

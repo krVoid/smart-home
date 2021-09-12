@@ -1,37 +1,40 @@
-Turn:
-<form [formGroup]="modelForm">
-  <mat-form-field>
-    <mat-select
-      matInput
-      placeholder="Select action"
-      formControlName="output"
-      required
-    >
-      <mat-option *ngFor="let output of data.outputs" [value]="output.id">
-        {{ output.name }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div *ngIf="selectedOutput">
-    <div class="output-action-wrapper" *ngIf="selectedOutput.isBinary">
-      <mat-slide-toggle color="primary" formControlName="turnOn"
-        >Turn on/off</mat-slide-toggle
+<div class="app-automations-modal">
+  <h2>New senario</h2>
+
+  Turn:
+  <form [formGroup]="modelForm">
+    <mat-form-field>
+      <mat-select
+        matInput
+        placeholder="Select action"
+        formControlName="output"
+        required
       >
-    </div>
-    <div
-      class="output-action-wrapper"
-      *ngIf="!selectedOutput.isBinary && selectedOutput.max"
-    >
-      <mat-form-field>
-        <input
-          matInput
-          placeholder="{{
-            'Set value from ' + selectedOutput.min + '-' + selectedOutput.max
-          }}"
-          formControlName="newValue"
-        />
-      </mat-form-field>
-      <!--           <mat-slider
+        <mat-option *ngFor="let output of data.outputs" [value]="output.id">
+          {{ output.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div *ngIf="selectedOutput">
+      <div class="output-action-wrapper" *ngIf="selectedOutput.isBinary">
+        <mat-slide-toggle color="primary" formControlName="turnOn"
+          >Turn on/off</mat-slide-toggle
+        >
+      </div>
+      <div
+        class="output-action-wrapper"
+        *ngIf="!selectedOutput.isBinary && selectedOutput.max"
+      >
+        <mat-form-field>
+          <input
+            matInput
+            placeholder="{{
+              'Set value from ' + selectedOutput.min + '-' + selectedOutput.max
+            }}"
+            formControlName="newValue"
+          />
+        </mat-form-field>
+        <!--           <mat-slider
           [max]="output.min"
           [min]="output.max"
           formControlName="newValue"
@@ -40,23 +43,24 @@ Turn:
           step="1"
         >
         </mat-slider>-->
+      </div>
     </div>
-  </div>
 
-  at
-  <cron-editor
-    [(cron)]="cronExpression"
-    [disabled]="isCronDisabled"
-    [(options)]="cronOptions"
-  ></cron-editor>
+    at
+    <cron-editor
+      [(cron)]="cronExpression"
+      [disabled]="isCronDisabled"
+      [(options)]="cronOptions"
+    ></cron-editor>
 
-  <button
-    mat-raised-button
-    color="accent"
-    (click)="save()"
-    style="float: right"
-    [mat-dialog-close]="true"
-  >
-    Save
-  </button>
-</form>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="save()"
+      style="float: right"
+      [mat-dialog-close]="true"
+    >
+      Save
+    </button>
+  </form>
+</div>

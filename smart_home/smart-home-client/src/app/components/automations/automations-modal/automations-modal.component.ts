@@ -8,6 +8,13 @@ import { ApiService } from 'src/app/services';
 @Component({
   selector: 'app-automations-modal',
   templateUrl: 'automations-modal.component.html',
+  styles: [
+    `
+      .app-automations-modal {
+        color: #2f4c77 !important;
+      }
+    `,
+  ],
 })
 export class AutomationsModalComponent implements OnInit {
   public modelForm: FormGroup;
