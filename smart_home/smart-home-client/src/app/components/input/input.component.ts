@@ -28,8 +28,6 @@ export class InputComponent implements OnDestroy {
   ) {}
 
   public async toogleShowStatus(event: any): Promise<void> {
-    console.log(event);
-
     if (event) {
       timer(0, 2000)
         .pipe(

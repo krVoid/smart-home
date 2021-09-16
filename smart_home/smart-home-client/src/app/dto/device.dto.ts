@@ -21,6 +21,7 @@ export interface OutputDto {
   outputId: any;
   description?: string;
   isBinary: boolean;
+  isColorPicker?: boolean;
   min?: number;
   max?: number;
   id: number;

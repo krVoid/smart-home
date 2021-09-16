@@ -36,6 +36,7 @@ import { CronEditorModule } from 'cron-editor';
 import { AutomationsModalComponent } from './components/automations/automations-modal/automations-modal.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { CronPipe } from './cron.utils';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { CronPipe } from './cron.utils';
     MatSelectModule,
     CronEditorModule,
     MatSliderModule,
+    ColorPickerModule,
   ],
   providers: [
     {

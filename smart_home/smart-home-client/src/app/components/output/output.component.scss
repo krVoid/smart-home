@@ -1,6 +1,6 @@
 .output-wrapper {
   width: 50%;
-  margin-top: 20px;
+  // margin-top: 20px;
   display: inline-block;
   padding: 10px;
   text-align: left;
@@ -12,6 +12,11 @@
   transition: 0.15s ease-in-out;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
   padding: 20px;
+
+  display: flex;
+  // flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 .output-header {
   font-size: 20px;
@@ -23,16 +28,34 @@
 }
 .output-action-wrapper {
   border-radius: 4px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
-  width: 47%;
+  // box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+  // width: 100%;
   margin: 5px;
   padding: 5px;
   display: flex;
   align-items: center;
-  min-width: 160px;
+  justify-content: center;
+  // min-width: 160px;
 }
 
 .output-actions {
   display: flex;
   flex-wrap: wrap;
+}
+
+.output-boarder-dashboard {
+  background-color: #fff;
+  border-radius: 20px;
+  border: none;
+  transition: none;
+  box-shadow: 0 8px 15px rgb(0 0 0 / 6%);
+  padding: 5px;
+  display: flex;
+  // flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input-dashboard {
+  width: 155px;
 }

@@ -1,12 +1,20 @@
 <div class="output-wrapper">
-  <div class="output-wrapper-border">
-    <p class="output-header">
-      {{ output.name }}
-    </p>
+  <div
+    class="output-wrapper-border"
+    [ngClass]="{ 'output-boarder-dashboard': isDashboardView }"
+  >
+    <div>
+      <p class="output-header">
+        {{ output.name }}
+      </p>
 
-    <p *ngIf="output.description" class="output-description">
-      {{ output.description }}
-    </p>
+      <p
+        *ngIf="output.description && !isDashboardView"
+        class="output-description"
+      >
+        {{ output.description }}
+      </p>
+    </div>
     <div class="output-actions">
       <!-- <div
         class="output-action-wrapper"
@@ -22,8 +30,11 @@
           >Turn on/off</mat-slide-toggle
         >
       </div>
-      <div class="output-action-wrapper" *ngIf="!output.isBinary && output.max">
-        <mat-form-field style="width: 100%">
+      <div
+        class="output-action-wrapper"
+        *ngIf="!output.isBinary && output.max && !output.isColorPicker"
+      >
+        <mat-form-field [ngClass]="{ 'input-dashboard': isDashboardView }">
           <input
             matInput
             placeholder="{{
@@ -53,7 +64,7 @@
       </div>
       <div
         class="output-action-wrapper"
-        *ngIf="!output.isBinary && !output.max"
+        *ngIf="!output.isBinary && !output.max && !output.isColorPicker"
       >
         <button
           mat-raised-button
@@ -63,6 +74,17 @@
         >
           Turn on
         </button>
+      </div>
+      <div
+        class="output-action-wrapper"
+        *ngIf="!output.isBinary && output.isColorPicker"
+      >
+        <input
+          [(colorPicker)]="color"
+          [value]="color"
+          [cpOutputFormat]="'rgba'"
+          [style.background]="color"
+        />
       </div>
 
       <!--  <div class="output-action-wrapper" *ngIf="output.isBinary">

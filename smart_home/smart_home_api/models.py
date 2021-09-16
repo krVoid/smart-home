@@ -48,6 +48,7 @@ class DeviceOutput(models.Model):
     device = models.ForeignKey(Device, related_name="deviceoutput", on_delete=models.CASCADE)
     description = models.CharField(max_length=230, null = True, blank= True)
     isBinary = models.BooleanField(default=True)
+    isColorPicker = models.BooleanField(default=False)
     min = models.IntegerField(blank=True, null=True)
     max = models.IntegerField(blank=True, null=True)
     outputId = models.IntegerField(blank=True, null=True)

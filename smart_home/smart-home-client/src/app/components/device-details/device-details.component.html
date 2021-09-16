@@ -5,29 +5,32 @@
       <i class="details-icon {{ modelForm.controls.iconName.value }}"></i>
     </div>
     <div>
-      <mat-form-field *ngIf="!deviceId">
-        <input
-          matInput
-          type="text"
-          id="name"
-          placeholder="name"
-          autocomplete="off"
-          formControlName="name"
-          required
-          disabled
-        />
-      </mat-form-field>
-
-      <mat-form-field *ngIf="!deviceId">
-        <input
-          matInput
-          disabled
-          id="url"
-          placeholder="url"
-          formControlName="url"
-          required
-        />
-      </mat-form-field>
+      <div>
+        <mat-form-field *ngIf="!deviceId">
+          <input
+            matInput
+            type="text"
+            id="name"
+            placeholder="name"
+            autocomplete="off"
+            formControlName="name"
+            required
+            disabled
+          />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field *ngIf="!deviceId">
+          <input
+            matInput
+            disabled
+            id="url"
+            placeholder="url"
+            formControlName="url"
+            required
+          />
+        </mat-form-field>
+      </div>
       <div>
         <h1 *ngIf="device" class="details-name">{{ device.name }}</h1>
       </div>

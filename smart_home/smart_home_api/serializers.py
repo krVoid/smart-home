@@ -29,7 +29,7 @@ class DeviceOutputSerializer(serializers.ModelSerializer):
 
     class Meta: 
         model = DeviceOutput
-        fields = ('name', 'id','description','isBinary', 'min', 'max', "outputId", "outputautomation")
+        fields = ('name', 'id','description','isBinary', 'isColorPicker', 'min', 'max', "outputId", "outputautomation")
 
 class DeviceInputSerializer(serializers.ModelSerializer):
     inputnotification = DeviceInputNotificationSerializer(many= True, read_only=True)

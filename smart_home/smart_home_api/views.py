@@ -58,6 +58,8 @@ class Notifier:
             finally:
                 self.lock.release()
 
+                # race condition  proces dzialajacy w tle ktory sprawdz czy wystapily warunki do wysłania notyfikacji 
+
     def get_sensor_value(self, input_id, device_id):
         device = Device.objects.get(pk=device_id)
         response = False

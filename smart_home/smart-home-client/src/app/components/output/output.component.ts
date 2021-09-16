@@ -11,10 +11,11 @@ import { ApiService } from 'src/app/services';
 export class OutputComponent implements OnInit {
   @Input() public output!: OutputDto;
   @Input() public deviceId: any;
+  @Input() public isDashboardView = false;
   public isInit = false;
   public newValue?: number;
   public turnOn = false;
-
+  public color = '';
   constructor(private apiService: ApiService, private router: Router) {}
 
   async ngOnInit() {
