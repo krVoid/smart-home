@@ -82,6 +82,7 @@
       >
         <input
           [(colorPicker)]="color"
+          (colorPickerChange)="colorPickerChange($event)"
           [value]="color"
           [cpOutputFormat]="'rgba'"
           [style.background]="color"

@@ -59,4 +59,30 @@ export class OutputComponent implements OnInit {
       });
     }
   }
+
+  public colorPickerChange(event: any): void {
+    const outputcolors = this.color.split('(')[1].split(')')[0].split(',');
+    console.log(outputcolors, this.color);
+    this.apiService
+      .setRedValue({
+        id: this.deviceId,
+        outputId: this.output.outputId,
+        value: outputcolors[0],
+      })
+      .then(() => {});
+    this.apiService
+      .setGreenValue({
+        id: this.deviceId,
+        outputId: this.output.outputId,
+        value: outputcolors[1],
+      })
+      .then(() => {});
+    this.apiService
+      .setBlueValue({
+        id: this.deviceId,
+        outputId: this.output.outputId,
+        value: outputcolors[2],
+      })
+      .then(() => {});
+  }
 }

@@ -1,18 +1,25 @@
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+from random import randrange
+import time
 
+
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 def fuzzy_controller(x, y):
-    temperature = ctrl.Antecedent(np.arange(0, 46, 1), 'temperature')
+    temperature = ctrl.Antecedent(np.arange(-20, 50, 1), 'temperature')
     humidity = ctrl.Antecedent(np.arange(0, 25, 1), 'humidity')
     fan_speed = ctrl.Consequent(np.arange(0, 1601, 1), 'fan_speed')
 
-    temperature['Too-cold'] = fuzz.trimf(temperature.universe, [0, 0, 10])
-    temperature['cold'] = fuzz.trimf(temperature.universe, [5, 10, 20])
-    temperature['warm'] = fuzz.trimf(temperature.universe, [15, 20, 25])
-    temperature['hot'] = fuzz.trimf(temperature.universe, [25, 30, 35])
-    temperature['Too-hot'] = fuzz.trimf(temperature.universe, [35, 40, 40])
+    temperature['Too-cold'] = fuzz.trapmf(temperature.universe, [-20, -20, -5, 5])
+    temperature['cold'] = fuzz.trapmf(temperature.universe, [-5, 7, 10, 18])
+    temperature['warm'] = fuzz.trapmf(temperature.universe, [12, 19, 23, 27])
+    temperature['hot'] = fuzz.trapmf(temperature.universe, [23, 28, 33, 37])
+    temperature['Too-hot'] = fuzz.trapmf(temperature.universe, [33, 40, 50, 50])
     # temperature.automf(3)
     # humidity.automf(3)
     humidity['low'] = fuzz.trimf(humidity.universe, [0, 0, 10])
@@ -23,11 +30,11 @@ def fuzzy_controller(x, y):
     fan_speed['medium'] = fuzz.trimf(fan_speed.universe, [400, 800, 1200])
     fan_speed['high'] = fuzz.trimf(fan_speed.universe, [800, 1200, 1600])
 
-    temperature.view()
+    # temperature.view()
     # x = input()
-    humidity.view()
+    # humidity.view()
     # y = input()
-    fan_speed.view()
+    # fan_speed.view()
     rule1a = ctrl.Rule(temperature['hot'] | humidity['low'], fan_speed['high'])
     rule1b = ctrl.Rule(temperature['hot'] | humidity['high'], fan_speed['medium'])
 
@@ -55,9 +62,15 @@ def fuzzy_controller(x, y):
     speed.input['humidity'] = int(y)
 
     speed.compute()
-    print(speed.output['fan_speed'])
     fan_speed.view(sim=speed)
+    print('Dane z czujnika temperatury: ', x, ', z czujnika wilgotności powietrza: ', y)
+    print('Wynik Fuzzy Controller: ', speed.output['fan_speed'])
+
     return speed.output['fan_speed'] 
 
-# fuzzy_controller(15, 10);
+for i in range(10):
+    humidity = randrange(25)
+    temperature = randrange(46)
+    fuzzy_controller(temperature, humidity);
+    # time(5)
 # https://pythonhosted.org/scikit-fuzzy/auto_examples/plot_tipping_problem.html#example-plot-tipping-problem-py

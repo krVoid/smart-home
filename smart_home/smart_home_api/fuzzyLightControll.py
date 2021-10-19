@@ -7,9 +7,12 @@ import datetime
 
 def fuzzy_controller(INPUT_ILLUMINANCE):
     # INPUT_ILLUMINANCE = 250
-    INPUT_TIME = datetime.datetime.now().hour + (datetime.datetime.now().minute /60)
-    # INPUT_TIME=12
-    x_illuminance = np.arange(0, 54613, 1)
+    # print(INPUT_ILLUMINANCE)
+    # INPUT_TIME = datetime.datetime.now().hour + (datetime.datetime.now().minute /60)
+    # print(INPUT_TIME)
+    INPUT_TIME=21
+
+    x_illuminance = np.arange(0, 65613, 1)
     x_timeOfDay = np.arange(0, 25, 1)
     x_outputIlluminance  = np.arange(0, 256, 1)
 
@@ -17,7 +20,7 @@ def fuzzy_controller(INPUT_ILLUMINANCE):
     qilluminance_lo = fuzz.trimf(x_illuminance, [5461, 13653, 21844])
     qilluminance_md = fuzz.trimf(x_illuminance, [13653, 27306, 40959])
     qilluminance_hi = fuzz.trimf(x_illuminance, [32767, 40959, 49151])
-    qilluminance_v_hi = fuzz.trimf(x_illuminance, [40959, 54612, 54612])
+    qilluminance_v_hi = fuzz.trapmf(x_illuminance, [30959, 44612,44612, 65612])
 
     timeOfDay_v_lo = fuzz.trapmf(x_timeOfDay, [0, 0, 5, 6])
     timeOfDay_lo = fuzz.trapmf(x_timeOfDay, [5, 6, 8, 9])
@@ -156,6 +159,7 @@ def fuzzy_controller(INPUT_ILLUMINANCE):
     # print(tip_mom)
     # print(tip_som)
     # print(tip_lom)
+    # print(result_centroid)
     return result_centroid
 
 # fuzzy_controller(50000)

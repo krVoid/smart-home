@@ -12,6 +12,27 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  //----color picker----
+  public setRedValue(switchL: any): Promise<boolean> {
+    return this.http
+      .post<any>(`${this.apiUrl}/set_value/red/`, switchL)
+      .toPromise();
+  }
+
+  public setGreenValue(switchL: any): Promise<boolean> {
+    return this.http
+      .post<any>(`${this.apiUrl}/set_value/green/`, switchL)
+      .toPromise();
+  }
+
+  public setBlueValue(switchL: any): Promise<boolean> {
+    return this.http
+      .post<any>(`${this.apiUrl}/set_value/blue/`, switchL)
+      .toPromise();
+  }
+
+  //-----------------------------
+
   public getDevices(): Observable<DeviceDto[]> {
     return this.http.get<any>(`${this.apiUrl}/devicedevice/`);
   }

@@ -165,6 +165,13 @@ LOGGING = {
             'filename': 'logging/requestlogs.log',
         },
     },
+    'root': { # this tells to capture logger.info() to console as well as in log file
+
+        'handlers': ['requestlogs_to_file'],
+
+        'level': 'INFO',
+
+    },
     'loggers': {
         'requestlogs': {
             'handlers': ['requestlogs_to_file'],

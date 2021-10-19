@@ -24,7 +24,12 @@ from smtplib import SMTPException
 from django.core.mail import send_mail
 from django.conf import settings
 import sys
+import logging
 
+
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 auto_lght_enabled = False
 auto_light_thread = None
 class Notifier:
@@ -156,6 +161,8 @@ def change_lamp_value(device):
             newIlluminance = fuzzyLightControll.fuzzy_controller(inputs_vlues)
             print('Dane z czujnika: ', inputs_vlues)
             print('Wynik Fuzzy Controller: ', newIlluminance)
+            logger.info('Dane z czujnika: ' + str(inputs_vlues[0]))
+            logger.info('Wynik Fuzzy Controller: ' + str(newIlluminance))
             outputs = DeviceOutput.objects.filter(device_id = device.id)
             for uoutput in outputs:
                 response = False
@@ -198,22 +205,46 @@ def turn_off(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def set_value(request):
-    try:
-        r_device_id = request.data['id']
-        output_id = request.data['outputId']
-        new_value = request.data['value']
-        device = Device.objects.get(pk=r_device_id)
-        output = DeviceOutput.objects.get(device_id = r_device_id, outputId=output_id)
-        if int(new_value) > int(output.max) or int(new_value) < int(output.min) or output.isBinary:
-            raise status.HTTP_400_BAD_REQUEST
-        response = False
-        url = device.url + "/output/"+str(output_id)+"/set-value"
-        url = url.replace("//output", "/output")
-        response = requests.post(url, new_value)
-        return Response(response)
-    except Device.DoesNotExist:
-        raise Http404
+def set_value(request, *args, **kwargs):
+    set_value_wrapper(None)(request, *args, **kwargs)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def set_red_value(request, *args, **kwargs):
+    set_value_wrapper('/red/')(request, *args, **kwargs)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def set_green_value(request, *args, **kwargs):
+    set_value_wrapper('/green/')(request, *args, **kwargs)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def set_blue_value(request, *args, **kwargs):
+    set_value_wrapper('/blue/')(request, *args, **kwargs)
+
+def set_value_wrapper(endOfUrl, *args, **kwargs):
+    def set_value(request, *args, **kwargs):
+        try:
+            r_device_id = request.data['id']
+            output_id = request.data['outputId']
+            new_value = request.data['value']
+            device = Device.objects.get(pk=r_device_id)
+            output = DeviceOutput.objects.get(device_id = r_device_id, outputId=output_id)
+            if int(new_value) > int(output.max) or int(new_value) < int(output.min) or output.isBinary:
+                raise status.HTTP_400_BAD_REQUEST
+            response = False
+            url = device.url + "/output/"+str(output_id)+"/set-value"
+            url = url.replace("//output", "/output")
+            if endOfUrl is not None:
+                url+=endOfUrl
+            response = requests.post(url, new_value)
+            return Response(response)
+        except Device.DoesNotExist:
+            raise Http404
+    return set_value
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -255,6 +286,7 @@ def register_device(request):
         deviceSerializer = DeviceSerializer(data=request.data)
         # file = request.data['image']
         # image = Device.objects.create(image=file)
+        print(request.data)
         if deviceSerializer.is_valid():
 
             device = deviceSerializer.save()
@@ -263,6 +295,7 @@ def register_device(request):
             response =requests.get(url)
             response = response.text.replace("\'", "\"").replace(",]", "]")
             responseJson = json.loads(response)
+            print(responseJson)
             for outputDevice in responseJson["outputs"]:
                 outputSerializer = DeviceOutputSerializer(data=outputDevice)
                 if outputSerializer.is_valid():
@@ -271,7 +304,7 @@ def register_device(request):
                 inputSerializer = DeviceInputSerializer(data=inputDevice)
                 if inputSerializer.is_valid():
                     inputSerializer.save(device=device)
-
+                print(inputSerializer.errors)
             return Response(device.id)
         print(deviceSerializer.errors)
         return Response(response)
@@ -376,6 +409,8 @@ def tmp(device_url):
             newIlluminance = fuzzyLightControll.fuzzy_controller(illuminance.json())
             print('Dane z czujnika: ', illuminance.json())
             print('Wynik Fuzzy Controller: ', newIlluminance)
+            logger.info('Dane z czujnika: ', inputs_vlues)
+            logger.info('Wynik Fuzzy Controller: ', newIlluminance)
             response = requests.post(device_url + 'brightness', str(np.float64(newIlluminance).item()))
         time.sleep(1)
 
